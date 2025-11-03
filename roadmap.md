@@ -1,0 +1,5 @@
+- [ ] Cursor Domain Axis label
+- [ ] Axis label overflow (when too many)
+- [ ] Axis label rotation
+- [ ] Axis label trimming
+- [ ] Dark theme doesn't seem to be working

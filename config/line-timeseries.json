@@ -1,0 +1,75 @@
+{
+  "family": "xy-series",
+  "container": "chartdiv",
+  "orientation": "vertical",
+
+  "data": {
+    "type": "csv",
+    "url": "./data/line-data-2.csv",
+    "delimiter": ","
+  },
+
+  "axes": {
+    "domain": {
+      "mode": "date",
+      "field": "date",
+      "baseInterval": { "timeUnit": "day", "count": 1 }
+    },
+    "values": [
+      {
+        "id": "left",
+        "position": "left",
+        "stacking": "normal"
+      },
+      {
+        "id": "right",
+        "position": "right",
+        "stacking": "none"
+      }
+    ]
+  },
+
+  "fields": {
+    "domain": "date",
+    "series": [
+      {
+        "id": "value1",
+        "name": "Left Column A",
+        "type": "column",
+        "valueAxisId": "left",
+        "color": "#FF6B6B"
+      },
+      {
+        "id": "value2",
+        "name": "Left Column B",
+        "type": "column",
+        "valueAxisId": "left",
+        "color": "#4FC3F7"
+      },
+      {
+        "id": "value3",
+        "name": "Right Line",
+        "type": "line",
+        "valueAxisId": "right",
+        "color": "#FFD93D"
+      },
+      {
+        "id": "value4",
+        "name": "Right Area",
+        "type": "area",
+        "valueAxisId": "right",
+        "color": "#00E676"
+      }
+    ]
+  },
+
+  "decorators": {
+    "legend": { "enabled": true },
+    "cursor": { "enabled": true },
+    "scrollbarX": { "enabled": true }
+  },
+
+  "theme": {
+    "animated": true
+  }
+}
