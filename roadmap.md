@@ -12,6 +12,7 @@
 - [ ] Inheritance model for config, only have to set config for whatever needs to be over-written
   - [ ] Create a base config, project-specific-overwrites too
 - [ ] Nicer color palletes in general
+- [ ] Stuff like theme, etc is done at the chart level, not at the create chart level
 
 ## Families
 

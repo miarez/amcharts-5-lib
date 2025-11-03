@@ -8,10 +8,25 @@ import { withScrollbars } from "../decorators/withScrollBars.js";
 export function createXYSeriesChart(config) {
   const root = am5.Root.new(config.container || "chartdiv");
 
+  // --- Theme setup ---
+  const themes = [];
+
   if (config.theme?.animated && window.am5themes_Animated) {
-    root.setThemes([am5themes_Animated.new(root)]);
+    themes.push(am5themes_Animated.new(root));
   }
 
+  const mode = (
+    config.theme?.mode ||
+    config.theme?.name ||
+    "light"
+  ).toLowerCase();
+  if (mode === "dark" && window.am5themes_Dark) {
+    themes.push(am5themes_Dark.new(root));
+  }
+
+  if (themes.length) {
+    root.setThemes(themes);
+  }
   const chart = root.container.children.push(
     am5xy.XYChart.new(root, {
       panX: true,

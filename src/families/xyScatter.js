@@ -7,10 +7,24 @@ import { withScrollbars } from "../decorators/withScrollbars.js";
 export function createXYScatterChart(config) {
   const root = am5.Root.new(config.container || "chartdiv");
 
+  const themes = [];
+
   if (config.theme?.animated && window.am5themes_Animated) {
-    root.setThemes([am5themes_Animated.new(root)]);
+    themes.push(am5themes_Animated.new(root));
   }
 
+  const mode = (
+    config.theme?.mode ||
+    config.theme?.name ||
+    "light"
+  ).toLowerCase();
+  if (mode === "dark" && window.am5themes_Dark) {
+    themes.push(am5themes_Dark.new(root));
+  }
+
+  if (themes.length) {
+    root.setThemes(themes);
+  }
   const chart = root.container.children.push(
     am5xy.XYChart.new(root, {
       panX: true,
@@ -20,6 +34,16 @@ export function createXYScatterChart(config) {
       layout: root.verticalLayout,
     })
   );
+
+  if (config.theme?.background) {
+    chart.set(
+      "background",
+      am5.Rectangle.new(root, {
+        fill: am5.color(config.theme.background),
+        fillOpacity: 1,
+      })
+    );
+  }
 
   // ---------- AXES: both value axes ----------
   const axesCfg = config.axes || {};
