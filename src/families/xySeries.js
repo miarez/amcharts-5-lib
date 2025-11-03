@@ -3,7 +3,7 @@ import { createAxes } from "../utils/axes.js";
 import { createSeriesForXY } from "../utils/series.js";
 import { withLegend } from "../decorators/withLegend.js";
 import { withCursor } from "../decorators/withCursor.js";
-import { withScrollbars } from "../decorators/withScrollbars.js";
+import { withScrollbars } from "../decorators/withScrollBars.js";
 
 export function createXYSeriesChart(config) {
   const root = am5.Root.new(config.container || "chartdiv");
@@ -16,8 +16,8 @@ export function createXYSeriesChart(config) {
     am5xy.XYChart.new(root, {
       panX: true,
       panY: false,
-      wheelX: "panX",
-      wheelY: "zoomX",
+      wheelX: false,
+      wheelY: false,
       layout: root.verticalLayout,
     })
   );
@@ -32,8 +32,9 @@ export function createXYSeriesChart(config) {
   });
 
   if (config.decorators?.legend?.enabled) withLegend(root, chart, { series });
-  if (config.decorators?.cursor?.enabled)
-    withCursor(root, chart, { xAxis: domainAxis });
+  if (config.decorators?.cursor?.enabled) {
+    withCursor(root, chart, { domainAxis, config });
+  }
   if (config.decorators?.scrollbarX?.enabled)
     withScrollbars(root, chart, { axis: "x" });
 

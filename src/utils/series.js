@@ -7,14 +7,23 @@ export function createSeriesForXY(
   const defs = config.fields?.series || [];
   const result = [];
 
+  const orientation = (config.orientation || "vertical").toLowerCase();
+  const isVertical = orientation === "vertical";
+
   const domainMode = domainAxis?._domainMode || "date"; // "date" | "category"
-  const domainField = domainAxis?._domainField || config.fields?.domain;
+  const domainField =
+    domainAxis?._domainField || config.fields?.domain || "date";
+
+  // Category axis must receive data explicitly
+  if (domainMode === "category" && domainAxis && data) {
+    domainAxis.data.setAll(data);
+  }
 
   defs.forEach((def) => {
     const valueAxisId = def.valueAxisId || "default";
-    const yAxis = valueAxes[valueAxisId] || valueAxes.default;
+    const valueAxis = valueAxes[valueAxisId] || valueAxes.default;
 
-    const stackingMode = yAxis?._stacking || "none"; // "none" | "stacked" | "percent"
+    const stackingMode = valueAxis?._stacking || "none"; // "none" | "stacked" | "percent"
     const isStacked = stackingMode !== "none";
 
     const type = (def.type || "line").toLowerCase();
@@ -30,66 +39,116 @@ export function createSeriesForXY(
 
     let series;
 
-    // ---------- COLUMN SERIES (vertical columns) ----------
+    // ---------- COLUMN / BAR SERIES ----------
     if (isColumn) {
-      if (domainMode === "category") {
-        series = chart.series.push(
-          am5xy.ColumnSeries.new(root, {
-            name: def.name || def.id,
-            xAxis: domainAxis,
-            yAxis,
-            categoryXField: domainField,
-            valueYField: def.id,
-            tooltip: am5.Tooltip.new(root, { labelText }),
-          })
-        );
+      if (isVertical) {
+        // Domain on X, value on Y
+        if (domainMode === "category") {
+          series = chart.series.push(
+            am5xy.ColumnSeries.new(root, {
+              name: def.name || def.id,
+              xAxis: domainAxis,
+              yAxis: valueAxis,
+              categoryXField: domainField,
+              valueYField: def.id,
+              tooltip: am5.Tooltip.new(root, { labelText }),
+            })
+          );
+        } else {
+          series = chart.series.push(
+            am5xy.ColumnSeries.new(root, {
+              name: def.name || def.id,
+              xAxis: domainAxis,
+              yAxis: valueAxis,
+              valueXField: domainField,
+              valueYField: def.id,
+              tooltip: am5.Tooltip.new(root, { labelText }),
+            })
+          );
+        }
       } else {
-        // date / numeric domain
-        series = chart.series.push(
-          am5xy.ColumnSeries.new(root, {
-            name: def.name || def.id,
-            xAxis: domainAxis,
-            yAxis,
-            valueXField: domainField,
-            valueYField: def.id,
-            tooltip: am5.Tooltip.new(root, { labelText }),
-          })
-        );
+        // HORIZONTAL → Domain on Y, value on X (bars)
+        if (domainMode === "category") {
+          series = chart.series.push(
+            am5xy.ColumnSeries.new(root, {
+              name: def.name || def.id,
+              xAxis: valueAxis,
+              yAxis: domainAxis,
+              valueXField: def.id,
+              categoryYField: domainField,
+              tooltip: am5.Tooltip.new(root, { labelText }),
+            })
+          );
+        } else {
+          // Date or numeric domain on Y
+          series = chart.series.push(
+            am5xy.ColumnSeries.new(root, {
+              name: def.name || def.id,
+              xAxis: valueAxis,
+              yAxis: domainAxis,
+              valueXField: def.id,
+              valueYField: domainField,
+              tooltip: am5.Tooltip.new(root, { labelText }),
+            })
+          );
+        }
       }
 
-      series.columns.template.setAll({
-        strokeOpacity: 0,
-      });
+      series.columns.template.setAll({ strokeOpacity: 0 });
     } else {
       // ---------- LINE / AREA SERIES ----------
-      if (domainMode === "category") {
-        series = chart.series.push(
-          am5xy.LineSeries.new(root, {
-            name: def.name || def.id,
-            xAxis: domainAxis,
-            yAxis,
-            categoryXField: domainField,
-            valueYField: def.id,
-            tooltip: am5.Tooltip.new(root, { labelText }),
-          })
-        );
+      if (isVertical) {
+        if (domainMode === "category") {
+          series = chart.series.push(
+            am5xy.LineSeries.new(root, {
+              name: def.name || def.id,
+              xAxis: domainAxis,
+              yAxis: valueAxis,
+              categoryXField: domainField,
+              valueYField: def.id,
+              tooltip: am5.Tooltip.new(root, { labelText }),
+            })
+          );
+        } else {
+          series = chart.series.push(
+            am5xy.LineSeries.new(root, {
+              name: def.name || def.id,
+              xAxis: domainAxis,
+              yAxis: valueAxis,
+              valueXField: domainField,
+              valueYField: def.id,
+              tooltip: am5.Tooltip.new(root, { labelText }),
+            })
+          );
+        }
       } else {
-        series = chart.series.push(
-          am5xy.LineSeries.new(root, {
-            name: def.name || def.id,
-            xAxis: domainAxis,
-            yAxis,
-            valueXField: domainField,
-            valueYField: def.id,
-            tooltip: am5.Tooltip.new(root, { labelText }),
-          })
-        );
+        // HORIZONTAL → Domain on Y, value on X
+        if (domainMode === "category") {
+          series = chart.series.push(
+            am5xy.LineSeries.new(root, {
+              name: def.name || def.id,
+              xAxis: valueAxis,
+              yAxis: domainAxis,
+              valueXField: def.id,
+              categoryYField: domainField,
+              tooltip: am5.Tooltip.new(root, { labelText }),
+            })
+          );
+        } else {
+          series = chart.series.push(
+            am5xy.LineSeries.new(root, {
+              name: def.name || def.id,
+              xAxis: valueAxis,
+              yAxis: domainAxis,
+              valueXField: def.id,
+              valueYField: domainField,
+              tooltip: am5.Tooltip.new(root, { labelText }),
+            })
+          );
+        }
       }
 
-      // Basic stroke styling
-      series.strokes.template.setAll({
-        strokeWidth: 2,
-      });
+      series.strokes.template.setAll({ strokeWidth: 2 });
 
       if (isArea) {
         series.fills.template.setAll({
@@ -102,9 +161,7 @@ export function createSeriesForXY(
     // ---------- STACKING ----------
     if (isStacked) {
       series.set("stacked", true);
-
       if (stackingMode === "percent") {
-        // Use percent-of-total for Y value
         series.set("valueYShow", "valueYTotalPercent");
       }
     }
@@ -112,24 +169,17 @@ export function createSeriesForXY(
     // ---------- COLOR ----------
     if (def.color) {
       const c = am5.color(def.color);
-
       series.set("stroke", c);
       series.set("fill", c);
-
-      if (series.strokes && series.strokes.template) {
-        series.strokes.template.set("stroke", c);
-      }
-      if (series.fills && series.fills.template) {
-        series.fills.template.setAll({
-          fill: c,
-          fillOpacity: isArea || isColumn ? 0.6 : 0.1,
-        });
-      }
+      series.strokes?.template?.set("stroke", c);
+      series.fills?.template?.setAll({
+        fill: c,
+        fillOpacity: isArea || isColumn ? 0.6 : 0.1,
+      });
     }
 
-    // Data for this series
+    // Data
     series.data.setAll(data);
-
     result.push(series);
   });
 

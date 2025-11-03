@@ -3,9 +3,10 @@ import { loadData } from "./utils/loadData.js";
 import { createChart } from "./core/createChart.js";
 
 (async function bootstrap() {
-  const config = await fetch("./config/line-timeseries.json").then((r) =>
-    r.json()
-  );
+  const file = "./config/line-timeseries.json";
+  // const file = "./config/category-columns.json";
+
+  const config = await fetch(file).then((r) => r.json());
 
   // Resolve data before passing into chart core
   const data = await loadData(config.data);

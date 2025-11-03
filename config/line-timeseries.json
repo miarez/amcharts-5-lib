@@ -1,7 +1,7 @@
 {
   "family": "xy-series",
   "container": "chartdiv",
-  "orientation": "vertical",
+  "orientation": "horizontal",
 
   "data": {
     "type": "csv",
@@ -62,10 +62,20 @@
       }
     ]
   },
-
   "decorators": {
     "legend": { "enabled": true },
-    "cursor": { "enabled": true },
+    "cursor": {
+      "enabled": true,
+      "behavior": "none",
+      "showLineX": true,
+      "showLineY": true,
+      "xAxisTooltip": {
+        "enabled": true,
+        "labelText": null,
+        "dateFormat": "MMM dd, yyyy",
+        "categoryFormat": "{value}"
+      }
+    },
     "scrollbarX": { "enabled": true }
   },
 

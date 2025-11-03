@@ -1,0 +1,56 @@
+{
+  "family": "xy-series",
+  "container": "chartdiv",
+  "orientation": "horizontal",
+
+  "data": {
+    "type": "csv",
+    "url": "./data/category-columns.csv",
+    "delimiter": ","
+  },
+
+  "axes": {
+    "domain": {
+      "mode": "category",
+      "field": "category"
+    },
+    "values": [{ "id": "left", "position": "left", "stacking": "none" }]
+  },
+
+  "fields": {
+    "domain": "category",
+    "series": [
+      {
+        "id": "sales",
+        "name": "Sales",
+        "type": "column",
+        "valueAxisId": "left",
+        "color": "#4FC3F7"
+      },
+      {
+        "id": "profit",
+        "name": "Profit",
+        "type": "column",
+        "valueAxisId": "left",
+        "color": "#FFD93D"
+      }
+    ]
+  },
+
+  "decorators": {
+    "legend": { "enabled": true },
+    "cursor": {
+      "enabled": true,
+      "behavior": "none",
+      "showLineX": true,
+      "showLineY": false,
+      "xAxisTooltip": {
+        "enabled": true,
+        "categoryFormat": "{value}"
+      }
+    },
+    "scrollbarX": { "enabled": false }
+  },
+
+  "theme": { "animated": true }
+}
