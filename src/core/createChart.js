@@ -1,4 +1,5 @@
 import { createXYSeriesChart } from "../families/xySeries.js";
+import { createXYScatterChart } from "../families/xyScatter.js";
 
 export function createChart(config) {
   const family = config.family || "xy-series";
@@ -6,6 +7,9 @@ export function createChart(config) {
   switch (family) {
     case "xy-series":
       return createXYSeriesChart(config);
+
+    case "xy-scatter":
+      return createXYScatterChart(config);
 
     default:
       throw new Error(`Unsupported chart family: ${family}`);

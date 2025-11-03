@@ -3,8 +3,12 @@ import { loadData } from "./utils/loadData.js";
 import { createChart } from "./core/createChart.js";
 
 (async function bootstrap() {
-  const file = "./config/line-timeseries.json";
-  // const file = "./config/category-columns.json";
+  const files = [
+    "./config/line-timeseries.json",
+    "./config/category-columns.json",
+    "./config/scatter-basic.json",
+  ];
+  const file = files[2];
 
   const config = await fetch(file).then((r) => r.json());
 

@@ -1,0 +1,56 @@
+{
+  "family": "xy-scatter",
+  "container": "chartdiv",
+
+  "data": {
+    "type": "csv",
+    "url": "./data/scatter-basic.csv",
+    "delimiter": ","
+  },
+
+  "axes": {
+    "x": {
+      "min": 0,
+      "max": 100
+    },
+    "y": {
+      "min": 0,
+      "max": 100
+    }
+  },
+
+  "fields": {
+    "x": "x",
+    "y": "y",
+    "series": [
+      {
+        "id": "points",
+        "name": "Points",
+        "type": "scatter",
+        "xField": "x",
+        "yField": "y",
+        "radiusField": "size",
+        "color": "#4FC3F7"
+      }
+    ]
+  },
+
+  "decorators": {
+    "legend": { "enabled": false },
+    "cursor": {
+      "enabled": true,
+      "behavior": "none",
+      "showLineX": true,
+      "showLineY": true,
+      "xAxisTooltip": {
+        "enabled": true,
+        "categoryFormat": "{value}"
+      }
+    },
+    "scrollbarX": { "enabled": false }
+  },
+
+  "theme": {
+    "animated": true
+  }
+}
