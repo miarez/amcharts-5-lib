@@ -1,0 +1,81 @@
+{
+  "family": "xy-scatter",
+  "container": "chartdiv",
+
+  "data": {
+    "type": "csv",
+    "url": "./data/scatter-complex.csv",
+    "delimiter": ","
+  },
+
+  "axes": {
+    "x": { "min": 0, "max": 13 },
+    "y": { "min": 0, "max": 20 }
+  },
+
+  "fields": {
+    "x": "x",
+    "y": "y",
+    "series": [
+      {
+        "id": "series1",
+        "name": "Series 1",
+        "type": "scatter",
+
+        "xField": "x",
+        "yField": "y1",
+        "radiusField": null,
+
+        "shape": "triangle-up",
+        "color": "#4FC3F7",
+
+        "trendline": {
+          "enabled": true,
+          "name": "Series 1 trend",
+          "color": "#4FC3F7",
+          "strokeWidth": 2,
+          "strokeDasharray": []
+        }
+      },
+      {
+        "id": "series2",
+        "name": "Series 2",
+        "type": "scatter",
+
+        "xField": "x",
+        "yField": "y2",
+        "radiusField": null,
+
+        "shape": "triangle-down",
+        "color": "#5C6BC0",
+
+        "trendline": {
+          "enabled": true,
+          "name": "Series 2 trend",
+          "color": "#5C6BC0",
+          "strokeWidth": 2,
+          "strokeDasharray": [4, 4]
+        }
+      }
+    ]
+  },
+
+  "decorators": {
+    "legend": { "enabled": true },
+    "cursor": {
+      "enabled": true,
+      "behavior": "none",
+      "showLineX": true,
+      "showLineY": true,
+      "xAxisTooltip": {
+        "enabled": true,
+        "categoryFormat": "{value}"
+      }
+    },
+    "scrollbarX": { "enabled": false }
+  },
+
+  "theme": {
+    "animated": true
+  }
+}

@@ -7,8 +7,9 @@ import { createChart } from "./core/createChart.js";
     "./config/line-timeseries.json",
     "./config/category-columns.json",
     "./config/scatter-basic.json",
+    "./config/scatter-complex.json",
   ];
-  const file = files[2];
+  const file = files[3];
 
   const config = await fetch(file).then((r) => r.json());
 
