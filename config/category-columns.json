@@ -52,5 +52,9 @@
     "scrollbarX": { "enabled": false }
   },
 
-  "theme": { "animated": true }
+  "theme": {
+    "animated": true,
+    "mode": "Dark",
+    "background": "#000000"
+  }
 }

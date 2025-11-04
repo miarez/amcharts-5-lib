@@ -1,20 +1,54 @@
+// src/core/createChart.js
 import { createXYSeriesChart } from "../families/xySeries.js";
 import { createXYScatterChart } from "../families/xyScatter.js";
 
+// Centralized root + theme creation
+function createRoot(config) {
+  const containerId = config.container || "chartdiv";
+  const root = am5.Root.new(containerId);
+
+  const themes = [];
+
+  // Animated theme
+  if (config.theme?.animated && window.am5themes_Animated) {
+    themes.push(am5themes_Animated.new(root));
+  }
+
+  // Dark / light mode
+  const mode = (
+    config.theme?.mode ||
+    config.theme?.name ||
+    "light"
+  ).toLowerCase();
+  if (mode === "dark" && window.am5themes_Dark) {
+    themes.push(am5themes_Dark.new(root));
+  }
+
+  if (themes.length) {
+    root.setThemes(themes);
+  }
+
+  return root;
+}
+
 export function createChart(config) {
   const family = config.family || "xy-series";
+  const root = createRoot(config);
 
   switch (family) {
     case "xy-series":
-      return createXYSeriesChart(config);
+      return createXYSeriesChart(root, config);
 
     case "xy-scatter":
-      return createXYScatterChart(config);
+      return createXYScatterChart(root, config);
 
     default:
+      // avoid leaking a root on bad config
+      if (!root.isDisposed()) root.dispose();
       throw new Error(`Unsupported chart family: ${family}`);
   }
 }
+
 // Stubs for later, per specs.md – we'll fill these in when we add diffing
 export function updateChart(chartContext, nextConfig) {
   console.warn("updateChart() not implemented yet");

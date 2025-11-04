@@ -3,39 +3,21 @@ import { createAxes } from "../utils/axes.js";
 import { createSeriesForXY } from "../utils/series.js";
 import { withLegend } from "../decorators/withLegend.js";
 import { withCursor } from "../decorators/withCursor.js";
-import { withScrollbars } from "../decorators/withScrollBars.js";
+import { withScrollbars } from "../decorators/withScrollbars.js";
+import { applyChartBackground } from "../core/applyChartBackground.js";
 
-export function createXYSeriesChart(config) {
-  const root = am5.Root.new(config.container || "chartdiv");
-
-  // --- Theme setup ---
-  const themes = [];
-
-  if (config.theme?.animated && window.am5themes_Animated) {
-    themes.push(am5themes_Animated.new(root));
-  }
-
-  const mode = (
-    config.theme?.mode ||
-    config.theme?.name ||
-    "light"
-  ).toLowerCase();
-  if (mode === "dark" && window.am5themes_Dark) {
-    themes.push(am5themes_Dark.new(root));
-  }
-
-  if (themes.length) {
-    root.setThemes(themes);
-  }
+// NOTE: root is now injected from createChart()
+export function createXYSeriesChart(root, config) {
   const chart = root.container.children.push(
     am5xy.XYChart.new(root, {
       panX: true,
       panY: false,
-      wheelX: false,
-      wheelY: false,
+      wheelX: "panX",
+      wheelY: "zoomX",
       layout: root.verticalLayout,
     })
   );
+  applyChartBackground(root, chart, config);
 
   const { domainAxis, valueAxes } = createAxes(root, chart, config);
 
@@ -46,12 +28,17 @@ export function createXYSeriesChart(config) {
     data: config.data,
   });
 
-  if (config.decorators?.legend?.enabled) withLegend(root, chart, { series });
+  if (config.decorators?.legend?.enabled) {
+    withLegend(root, chart, { series });
+  }
+
   if (config.decorators?.cursor?.enabled) {
     withCursor(root, chart, { domainAxis, config });
   }
-  if (config.decorators?.scrollbarX?.enabled)
+
+  if (config.decorators?.scrollbarX?.enabled) {
     withScrollbars(root, chart, { axis: "x" });
+  }
 
   return {
     root,

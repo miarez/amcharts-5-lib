@@ -4,27 +4,10 @@ import { withLegend } from "../decorators/withLegend.js";
 import { withCursor } from "../decorators/withCursor.js";
 import { withScrollbars } from "../decorators/withScrollbars.js";
 
-export function createXYScatterChart(config) {
-  const root = am5.Root.new(config.container || "chartdiv");
+import { applyChartBackground } from "../core/applyChartBackground.js";
 
-  const themes = [];
-
-  if (config.theme?.animated && window.am5themes_Animated) {
-    themes.push(am5themes_Animated.new(root));
-  }
-
-  const mode = (
-    config.theme?.mode ||
-    config.theme?.name ||
-    "light"
-  ).toLowerCase();
-  if (mode === "dark" && window.am5themes_Dark) {
-    themes.push(am5themes_Dark.new(root));
-  }
-
-  if (themes.length) {
-    root.setThemes(themes);
-  }
+// NOTE: root is injected from createChart()
+export function createXYScatterChart(root, config) {
   const chart = root.container.children.push(
     am5xy.XYChart.new(root, {
       panX: true,
@@ -35,17 +18,8 @@ export function createXYScatterChart(config) {
     })
   );
 
-  if (config.theme?.background) {
-    chart.set(
-      "background",
-      am5.Rectangle.new(root, {
-        fill: am5.color(config.theme.background),
-        fillOpacity: 1,
-      })
-    );
-  }
+  applyChartBackground(root, chart, config);
 
-  // ---------- AXES: both value axes ----------
   const axesCfg = config.axes || {};
   const xCfg = axesCfg.x || {};
   const yCfg = axesCfg.y || {};
@@ -71,7 +45,7 @@ export function createXYScatterChart(config) {
     })
   );
 
-  // For cursor/decorators: treat xAxis as "domain" for tooltips
+  // For cursor/decorators: treat xAxis as "domain" for tooltip formatting
   xAxis._domainMode = "value";
   xAxis._domainField = config.fields?.x || "x";
 
@@ -82,13 +56,11 @@ export function createXYScatterChart(config) {
     data: config.data,
   });
 
-  // ---------- Decorators ----------
   if (config.decorators?.legend?.enabled) {
     withLegend(root, chart, { series });
   }
 
   if (config.decorators?.cursor?.enabled) {
-    // For scatter, domainAxis = xAxis (value axis)
     withCursor(root, chart, { domainAxis: xAxis, config });
   }
 
