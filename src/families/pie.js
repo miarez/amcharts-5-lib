@@ -4,28 +4,32 @@ import { applyChartBackground } from "../core/applyChartBackground.js";
 
 // NOTE: root is injected from createChart(), same as XY families
 export function createPieChart(root, config) {
+  const variant = config.family || "pie"; // "pie" or "donut"
+
   const options = config.options || {};
   const fields = config.fields || {};
+  const data = Array.isArray(config.data) ? config.data : [];
 
   const categoryField = fields.category || "category";
   const valueField = fields.value || "value";
   const colorField = fields.color || null;
 
-  // data is already resolved in main.js and attached as config.data
-  const data = Array.isArray(config.data) ? config.data : [];
+  // If user explicitly set innerRadius in options, respect it.
+  // Otherwise, pick a default based on variant.
+  const innerRadiusRaw =
+    options.innerRadius ?? (variant === "donut" ? "50%" : 0);
 
-  // Chart container
   const chart = root.container.children.push(
     am5percent.PieChart.new(root, {
       layout: root.verticalLayout,
-      innerRadius: normalizeInnerRadius(options.innerRadius),
+      innerRadius: normalizeInnerRadius(innerRadiusRaw),
     })
   );
 
-  // Optional background (same pattern as XY)
+  // ✅ same as XY: shared background decorator
   applyChartBackground(root, chart, config);
 
-  // Optional title above chart
+  // Optional title (purely cosmetic, like you'd do on XY)
   if (options.title) {
     root.container.children.unshift(
       am5.Label.new(root, {
@@ -44,10 +48,9 @@ export function createPieChart(root, config) {
     })
   );
 
-  // Data for slices
   series.data.setAll(data);
 
-  // Optional per-slice color field
+  // Optional per-slice color field (same pattern as XY colorField)
   if (colorField) {
     series.slices.template.adapters.add("fill", (fill, target) => {
       const d = target.dataItem?.dataContext;
@@ -58,11 +61,24 @@ export function createPieChart(root, config) {
     });
   }
 
-  // Optional legend using shared decorator
-  if (options.legend !== false) {
-    // withLegend just calls legend.data.setAll(...)
-    // Here we pass series.dataItems instead of an array of series
-    withLegend(root, chart, { series: series.dataItems });
+  // Optional donut-style rounding (purely cosmetic)
+  if (variant === "donut") {
+    const cornerRadius = options.cornerRadius ?? 10;
+    const innerCornerRadius = options.innerCornerRadius ?? 8;
+
+    series.slices.template.setAll({
+      cornerRadius,
+      innerCornerRadius,
+    });
+  }
+
+  // ✅ Legend handling aligned with XY:
+  // enable via config.decorators.legend.enabled
+  const legendEnabled = config.decorators?.legend?.enabled ?? false;
+  if (legendEnabled) {
+    // If your withLegend expects an array of series,
+    // you can change this to series: [series]
+    withLegend(root, chart, { series });
   }
 
   return {
@@ -75,7 +91,6 @@ export function createPieChart(root, config) {
   };
 }
 
-// Helper to support numeric or percentage innerRadius
 function normalizeInnerRadius(innerRadius) {
   if (innerRadius == null) return 0;
   if (typeof innerRadius === "string" && innerRadius.endsWith("%")) {

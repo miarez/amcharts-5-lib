@@ -9,8 +9,9 @@ import { createChart } from "./core/createChart.js";
     "./config/scatter-basic.json",
     "./config/scatter-complex.json",
     "./config/pie-config.json",
+    "./config/donut-config.json",
   ];
-  const file = files[4];
+  const file = files[5];
 
   const config = await fetch(file).then((r) => r.json());
 

@@ -44,6 +44,7 @@ export function createChart(config) {
       return createXYScatterChart(root, config);
 
     case "pie":
+    case "donut":
       return createPieChart(root, config);
 
     default:
