@@ -1,0 +1,22 @@
+{
+  "id": "demo-pie",
+  "family": "pie",
+  "container": "chartdiv",
+
+  "data": {
+    "type": "csv",
+    "url": "./data/pie-data.csv"
+  },
+
+  "fields": {
+    "category": "category",
+    "value": "value",
+    "color": "color"
+  },
+
+  "options": {
+    "innerRadius": 0,
+    "legend": true,
+    "title": "Basic Pie"
+  }
+}

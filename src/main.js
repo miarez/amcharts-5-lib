@@ -8,8 +8,9 @@ import { createChart } from "./core/createChart.js";
     "./config/category-columns.json",
     "./config/scatter-basic.json",
     "./config/scatter-complex.json",
+    "./config/pie-config.json",
   ];
-  const file = files[3];
+  const file = files[4];
 
   const config = await fetch(file).then((r) => r.json());
 

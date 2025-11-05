@@ -1,6 +1,7 @@
 // src/core/createChart.js
 import { createXYSeriesChart } from "../families/xySeries.js";
 import { createXYScatterChart } from "../families/xyScatter.js";
+import { createPieChart } from "../families/pie.js"; // ⬅️ add this
 
 // Centralized root + theme creation
 function createRoot(config) {
@@ -41,6 +42,9 @@ export function createChart(config) {
 
     case "xy-scatter":
       return createXYScatterChart(root, config);
+
+    case "pie":
+      return createPieChart(root, config);
 
     default:
       // avoid leaking a root on bad config

@@ -4,7 +4,7 @@
 - [ ] Axis label overflow (when too many)
 - [ ] Axis label rotation
 - [ ] Axis label trimming
-- [ ] Dark theme doesn't seem to be working
+- [x] Dark theme doesn't seem to be working
 - [ ] Error handling to know what blew up
 - [x] Horizontal charts don't work
 - [ ] Zoom / Pan Behaviour also injected from config
@@ -12,11 +12,14 @@
 - [ ] Inheritance model for config, only have to set config for whatever needs to be over-written
   - [ ] Create a base config, project-specific-overwrites too
 - [ ] Nicer color palletes in general
-- [ ] Stuff like theme, etc is done at the chart level, not at the create chart level
+- [x] Stuff like theme, etc is done at the chart level, not at the create chart level
+- [ ] Scatter trendline to display the slope maybe? or statistical facts.
+- [ ] Potentially add stuff like prediction lines, stats, etc
+- [ ] reference libs in index only based on charts I'll actually need (optimization nitpick)
 
 ## Families
 
-- [ ] Scatter
+- [x] Scatter
 - [ ] Pie
 - [ ] Force
 
@@ -30,7 +33,7 @@
 # Charts I like
 
 - [x] https://www.amcharts.com/demos/multiple-value-axes/
-- [ ] https://www.amcharts.com/demos/scatter-chart/
+- [x] https://www.amcharts.com/demos/scatter-chart/
 - [ ] https://www.amcharts.com/demos/zoomable-bubble-chart/
 - [ ] https://www.amcharts.com/demos/xy-chart-value-based-line-graphs/
 - [ ] https://www.amcharts.com/demos/bubble-based-heat-map/
