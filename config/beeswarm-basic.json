@@ -1,0 +1,35 @@
+{
+  "id": "beeswarm-basic",
+  "family": "beeswarm",
+  "container": "chartdiv",
+  "data": {
+    "type": "csv",
+    "url": "./data/beeswarm-basic.csv"
+  },
+  "fields": {
+    "x": "x"
+  },
+  "axes": {
+    "x": {
+      "min": 0,
+      "max": 100
+    },
+    "y": {}
+  },
+  "options": {
+    "title": "Beeswarm (Value X + Jitter Y)",
+    "jitter": 0.15,
+    "radius": 5
+  },
+  "decorators": {
+    "cursor": {
+      "enabled": true
+    },
+    "scrollbarX": {
+      "enabled": false
+    },
+    "legend": {
+      "enabled": false
+    }
+  }
+}
