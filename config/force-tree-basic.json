@@ -1,0 +1,31 @@
+{
+  "id": "force-tree-basic",
+  "family": "force-tree",
+  "container": "chartdiv",
+  "data": {
+    "type": "json",
+    "url": "./data/force-tree-basic.json"
+  },
+  "fields": {
+    "category": "name",
+    "value": "value",
+    "children": "children",
+    "color": "color"
+  },
+  "options": {
+    "title": "Force-Directed Tree",
+    "minRadius": 10,
+    "maxRadius": 40,
+    "centerStrength": 0.8,
+    "manyBodyStrength": -20
+  },
+  "decorators": {
+    "legend": {
+      "enabled": false
+    }
+  },
+  "theme": {
+    "background": "#000",
+    "mode": "dark"
+  }
+}

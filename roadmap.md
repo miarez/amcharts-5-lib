@@ -78,7 +78,7 @@
 
 ## Tree
 
-- [ ] https://www.amcharts.com/demos/collapsible-force-directed-tree/
+- [x] https://www.amcharts.com/demos/collapsible-force-directed-tree/
 
 ## Arc
 

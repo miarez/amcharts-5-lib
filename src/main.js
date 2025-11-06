@@ -10,8 +10,10 @@ import { createChart } from "./core/createChart.js";
     "./config/scatter-complex.json",
     "./config/pie-config.json",
     "./config/donut-config.json",
+    "./config/force-tree-basic.json",
+    "./config/bubble-pie.json",
   ];
-  const file = files[5];
+  const file = files[7];
 
   const config = await fetch(file).then((r) => r.json());
 

@@ -1,0 +1,56 @@
+{
+  "name": "Root",
+  "value": 10,
+  "color": "#4FC3F7",
+  "children": [
+    {
+      "name": "Cluster A",
+      "value": 5,
+      "color": "#FF6B6B",
+      "children": [
+        {
+          "name": "Node A1",
+          "value": 2
+        },
+        {
+          "name": "Node A2",
+          "value": 3
+        }
+      ]
+    },
+    {
+      "name": "Cluster B",
+      "value": 4,
+      "color": "#FFD93D",
+      "children": [
+        {
+          "name": "Node B1",
+          "value": 1
+        },
+        {
+          "name": "Node B2",
+          "value": 1
+        },
+        {
+          "name": "Node B3",
+          "value": 2
+        }
+      ]
+    },
+    {
+      "name": "Cluster C",
+      "value": 3,
+      "color": "#1A535C",
+      "children": [
+        {
+          "name": "Node C1",
+          "value": 1
+        },
+        {
+          "name": "Node C2",
+          "value": 2
+        }
+      ]
+    }
+  ]
+}

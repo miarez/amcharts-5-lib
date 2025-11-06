@@ -2,7 +2,8 @@
 import { createXYSeriesChart } from "../families/xySeries.js";
 import { createXYScatterChart } from "../families/xyScatter.js";
 import { createPieChart } from "../families/pie.js"; // ⬅️ add this
-
+import { createForceTreeChart } from "../families/forceTree.js";
+import { createBubblePieChart } from "../families/bubblePie.js";
 // Centralized root + theme creation
 function createRoot(config) {
   const containerId = config.container || "chartdiv";
@@ -46,6 +47,12 @@ export function createChart(config) {
     case "pie":
     case "donut":
       return createPieChart(root, config);
+
+    case "force-tree":
+      return createForceTreeChart(root, config);
+
+    case "bubble-pie":
+      return createBubblePieChart(root, config);
 
     default:
       // avoid leaking a root on bad config
