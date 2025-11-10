@@ -37,17 +37,5 @@
 
   "options": {
     "innerRadius": 40
-  },
-
-  "decorators": {
-    "legend": { "enabled": false },
-    "cursor": { "enabled": false },
-    "scrollbarX": { "enabled": false }
-  },
-
-  "theme": {
-    "animated": true,
-    "mode": "Dark",
-    "background": "#000000"
   }
 }

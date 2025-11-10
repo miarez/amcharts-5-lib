@@ -18,14 +18,5 @@
     "maxRadius": 40,
     "centerStrength": 0.8,
     "manyBodyStrength": -20
-  },
-  "decorators": {
-    "legend": {
-      "enabled": false
-    }
-  },
-  "theme": {
-    "background": "#000",
-    "mode": "dark"
   }
 }

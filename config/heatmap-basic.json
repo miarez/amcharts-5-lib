@@ -28,17 +28,5 @@
   "options": {
     "minColor": "#fffb77",
     "maxColor": "#fe131a"
-  },
-
-  "decorators": {
-    "legend": { "enabled": false },
-    "cursor": { "enabled": false },
-    "scrollbarX": { "enabled": false }
-  },
-
-  "theme": {
-    "animated": true,
-    "mode": "Dark",
-    "background": "#000000"
   }
 }

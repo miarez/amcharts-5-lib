@@ -2,7 +2,7 @@
 import { createScatterSeries } from "../utils/scatterSeries.js";
 import { withLegend } from "../decorators/withLegend.js";
 import { withCursor } from "../decorators/withCursor.js";
-import { withScrollbars } from "../decorators/withScrollbars.js";
+import { withScrollbars } from "../decorators/withScrollBars.js";
 
 import { applyChartBackground } from "../core/applyChartBackground.js";
 

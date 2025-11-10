@@ -1,6 +1,7 @@
 // src/main.js
 import { loadData } from "./utils/loadData.js";
 import { createChart } from "./core/createChart.js";
+import { applyBaseConfig } from "./core/applyBaseConfig.js";
 
 (async function bootstrap() {
   const files = [
@@ -19,9 +20,15 @@ import { createChart } from "./core/createChart.js";
     "./config/polar-basic.json",
     "./config/polar-scatter.json",
   ];
-  const file = files[13];
+  const file = files[3];
 
-  const config = await fetch(file).then((r) => r.json());
+  // Load raw JSON config
+  const rawConfig = await fetch(file).then((r) => r.json());
+
+  // Apply base theme + decorators, normalize cursor, etc.
+  const config = applyBaseConfig(rawConfig);
+
+  console.log(config);
 
   // Resolve data before passing into chart core
   const data = await loadData(config.data);

@@ -23,19 +23,5 @@
   "options": {
     "minRadius": 2,
     "maxRadius": 9
-  },
-
-  "decorators": {
-    "legend": { "enabled": false },
-    "cursor": {
-      "enabled": false
-    },
-    "scrollbarX": { "enabled": false }
-  },
-
-  "theme": {
-    "animated": true,
-    "mode": "Dark",
-    "background": "#000000"
   }
 }

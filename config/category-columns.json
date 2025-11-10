@@ -35,26 +35,5 @@
         "color": "#FFD93D"
       }
     ]
-  },
-
-  "decorators": {
-    "legend": { "enabled": true },
-    "cursor": {
-      "enabled": true,
-      "behavior": "none",
-      "showLineX": true,
-      "showLineY": false,
-      "xAxisTooltip": {
-        "enabled": true,
-        "categoryFormat": "{value}"
-      }
-    },
-    "scrollbarX": { "enabled": false }
-  },
-
-  "theme": {
-    "animated": true,
-    "mode": "Dark",
-    "background": "#000000"
   }
 }

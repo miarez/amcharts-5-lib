@@ -17,9 +17,5 @@
   "options": {
     "title": "Sales by Region (Donut)",
     "legend": true
-  },
-  "theme": {
-    "background": "#000",
-    "mode": "dark"
   }
 }

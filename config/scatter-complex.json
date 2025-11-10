@@ -59,25 +59,5 @@
       }
     ]
   },
-
-  "decorators": {
-    "legend": { "enabled": true },
-    "cursor": {
-      "enabled": true,
-      "behavior": "none",
-      "showLineX": true,
-      "showLineY": true,
-      "xAxisTooltip": {
-        "enabled": true,
-        "categoryFormat": "{value}"
-      }
-    },
-    "scrollbarX": { "enabled": false }
-  },
-
-  "theme": {
-    "animated": true,
-    "mode": "Dark",
-    "background": "#000000"
-  }
+  "decorators": {}
 }

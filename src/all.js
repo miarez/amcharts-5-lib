@@ -1,6 +1,7 @@
 // src/main.js
 import { loadData } from "./utils/loadData.js";
 import { createChart } from "./core/createChart.js";
+import { applyBaseConfig } from "./core/applyBaseConfig.js";
 
 const files = [
   "./config/line-timeseries.json",
@@ -23,7 +24,10 @@ const files = [
   const instances = [];
 
   for (const file of files) {
-    const config = await fetch(file).then((r) => r.json());
+    const rawConfig = await fetch(file).then((r) => r.json());
+
+    // Apply base theme + decorators, normalize cursor, etc.
+    const config = applyBaseConfig(rawConfig);
 
     // Derive a stable base name for IDs
     const baseName = (

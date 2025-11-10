@@ -48,15 +48,5 @@
 
     "tickLabelRadius": 10,
     "bandLabelRadius": -25
-  },
-
-  "decorators": {
-    "legend": { "enabled": false },
-    "cursor": { "enabled": false },
-    "scrollbarX": { "enabled": false }
-  },
-
-  "theme": {
-    "animated": true
   }
 }

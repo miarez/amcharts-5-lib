@@ -66,13 +66,13 @@
 
 ## Radar / Polar
 
-- [ ] https://www.amcharts.com/demos/stacked-area-radar/
+- [x] https://www.amcharts.com/demos/stacked-area-radar/
 - [ ] https://www.amcharts.com/demos/polar-chart/
-- [ ] https://www.amcharts.com/demos/polar-scatter/
+- [x] https://www.amcharts.com/demos/polar-scatter/
 
 ## Guage
 
-- [ ] https://www.amcharts.com/demos/gauge-with-bands/
+- [x] https://www.amcharts.com/demos/gauge-with-bands/
 - [ ] https://www.amcharts.com/demos/solid-gauge/
 - [ ] https://www.amcharts.com/demos/multi-part-gauge/
 - [ ] https://www.amcharts.com/demos/animated-gauge/

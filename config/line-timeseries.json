@@ -61,25 +61,5 @@
         "color": "#00E676"
       }
     ]
-  },
-  "decorators": {
-    "legend": { "enabled": true },
-    "cursor": {
-      "enabled": true,
-      "behavior": "none",
-      "showLineX": true,
-      "showLineY": true,
-      "xAxisTooltip": {
-        "enabled": true,
-        "labelText": null,
-        "dateFormat": "MMM dd, yyyy",
-        "categoryFormat": "{value}"
-      }
-    },
-    "scrollbarX": { "enabled": true }
-  },
-
-  "theme": {
-    "animated": true
   }
 }

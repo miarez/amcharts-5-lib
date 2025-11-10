@@ -33,24 +33,5 @@
         "color": "#4FC3F7"
       }
     ]
-  },
-
-  "decorators": {
-    "legend": { "enabled": false },
-    "cursor": {
-      "enabled": true,
-      "behavior": "none",
-      "showLineX": true,
-      "showLineY": true,
-      "xAxisTooltip": {
-        "enabled": true,
-        "categoryFormat": "{value}"
-      }
-    },
-    "scrollbarX": { "enabled": false }
-  },
-
-  "theme": {
-    "animated": true
   }
 }
