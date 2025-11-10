@@ -10,6 +10,7 @@ const files = [
   "./config/pie-config.json",
   "./config/donut-config.json",
   "./config/force-tree-basic.json",
+  "./config/beeswarm-basic.json",
 ];
 
 (async function bootstrap() {

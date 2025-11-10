@@ -14,21 +14,25 @@ The system is designed to provide flexibility, consistency, and scalability acro
 
 ```
 src/
+├── all.js                      # Demo entry: renders all charts on a page
+├── main.js                     # Default entry: single-chart bootstrapping
 ├── core/
-│   └── createChart.js         # Family router and entry point
+│   ├── createChart.js          # Family router and entry point
+│   └── applyChartBackground.js # Shared background + theme helpers
 ├── families/
-│   └── xySeries/
-│       └── index.js           # xy-series family implementation (lines, columns, areas)
-├── xy/
-│   ├── axes.js                # Shared XY primitives for domain/value axes
-│   └── series.js              # Shared XY primitives for line/column/area series creation
-├── shared/
-│   ├── loadData.js            # CSV/JSON loader
-│   └── colors.js              # Color helpers, parsing utilities
+│   ├── xySeries.js             # Cartesian domain+value charts (line/column/area/combo)
+│   ├── xyScatter.js            # Value–value scatter/bubble charts
+│   ├── pie.js                  # Pie/Donut charts
+│   └── forceTree.js            # Force-directed tree charts
+├── utils/
+│   ├── axes.js                 # Shared axis creation for XY charts
+│   ├── series.js               # Shared series creation for xy-series family
+│   ├── scatterSeries.js        # Shared series creation for xy-scatter family
+│   └── loadData.js             # CSV/JSON loader and coercion
 └── decorators/
     ├── withLegend.js
     ├── withCursor.js
-    └── withScrollbars.js
+    └── withScrollBars.js
 ```
 
 ---

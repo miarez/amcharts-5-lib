@@ -1,0 +1,41 @@
+{
+  "id": "beeswarm-basic",
+  "family": "beeswarm",
+  "container": "chartdiv",
+
+  "data": {
+    "type": "csv",
+    "url": "./data/beeswarm-basic.csv",
+    "delimiter": ","
+  },
+
+  "axes": {
+    "x": {},
+    "y": {}
+  },
+
+  "fields": {
+    "x": "x",
+    "y": "y",
+    "value": "value"
+  },
+
+  "options": {
+    "minRadius": 2,
+    "maxRadius": 9
+  },
+
+  "decorators": {
+    "legend": { "enabled": false },
+    "cursor": {
+      "enabled": false
+    },
+    "scrollbarX": { "enabled": false }
+  },
+
+  "theme": {
+    "animated": true,
+    "mode": "Dark",
+    "background": "#000000"
+  }
+}

@@ -35,7 +35,9 @@
 - [x] https://www.amcharts.com/demos/multiple-value-axes/
 - [x] https://www.amcharts.com/demos/scatter-chart/
 - [ ] https://www.amcharts.com/demos/zoomable-bubble-chart/
+  - is this essentially a scatter plot with different sizes/colors for the points?
 - [ ] https://www.amcharts.com/demos/xy-chart-value-based-line-graphs/
+
 - [ ] https://www.amcharts.com/demos/bubble-based-heat-map/
 - [ ] https://www.amcharts.com/demos/bubble-chart/
 - [ ] https://www.amcharts.com/demos/stream-chart/
@@ -54,7 +56,7 @@
 - [ ] https://www.amcharts.com/demos/bubble-chart-with-pie-bullets/
 - [ ] https://www.amcharts.com/demos/variable-radius-nested-pie/
 - [ ] https://www.amcharts.com/demos/nested-donut-chart/
-- [ ] https://www.amcharts.com/demos/donut-chart/
+- [x] https://www.amcharts.com/demos/donut-chart/
 - [ ] https://www.amcharts.com/demos/packed-circle-chart/
 - [ ] https://www.amcharts.com/demos/radial-bar-chart/
 
@@ -87,3 +89,7 @@
 ## Timeline
 
 - [ ] https://www.amcharts.com/demos/serpentine-timeline-chart/
+
+## HeatMap
+
+- [ ] https://www.amcharts.com/demos/heat-map-with-legend/
