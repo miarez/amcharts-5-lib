@@ -13,8 +13,10 @@ import { createChart } from "./core/createChart.js";
     "./config/force-tree-basic.json",
     "./config/bubble-pie.json",
     "./config/beeswarm-basic.json",
+    "./config/heatmap-basic.json",
+    "./config/gauge-banded.json",
   ];
-  const file = files[8];
+  const file = files[10];
 
   const config = await fetch(file).then((r) => r.json());
 

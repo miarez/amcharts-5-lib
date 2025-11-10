@@ -1,0 +1,44 @@
+{
+  "id": "heatmap-basic",
+  "family": "heatmap",
+  "container": "chartdiv",
+
+  "data": {
+    "type": "csv",
+    "url": "./data/heatmap-basic.csv",
+    "delimiter": ","
+  },
+
+  "axes": {
+    "x": {
+      "type": "category"
+    },
+    "y": {
+      "type": "category",
+      "inversed": true
+    }
+  },
+
+  "fields": {
+    "x": "hour",
+    "y": "weekday",
+    "value": "value"
+  },
+
+  "options": {
+    "minColor": "#fffb77",
+    "maxColor": "#fe131a"
+  },
+
+  "decorators": {
+    "legend": { "enabled": false },
+    "cursor": { "enabled": false },
+    "scrollbarX": { "enabled": false }
+  },
+
+  "theme": {
+    "animated": true,
+    "mode": "Dark",
+    "background": "#000000"
+  }
+}

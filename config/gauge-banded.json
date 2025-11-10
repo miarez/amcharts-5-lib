@@ -1,0 +1,54 @@
+{
+  "id": "gauge-basic",
+  "family": "gauge",
+  "container": "chartdiv",
+
+  "data": {
+    "type": "csv",
+    "url": "./data/gauge-banded.csv",
+    "delimiter": ","
+  },
+
+  "fields": {
+    "value": "value"
+  },
+
+  "axes": {
+    "value": {
+      "min": 0,
+      "max": 100,
+      "numberFormat": "#'%'"
+    }
+  },
+
+  "options": {
+    "startAngle": 160,
+    "endAngle": 380,
+    "innerRadius": -70,
+
+    "bands": [
+      { "start": 0, "end": 50, "color": "#84b761", "label": "MEOW" },
+      { "start": 50, "end": 80, "color": "#fdd400", "label": "WOOF" },
+      { "start": 80, "end": 100, "color": "#cc4748", "label": "QUACK" }
+    ],
+
+    "label": {
+      "enabled": true,
+      "fontSize": 32,
+      "decimals": 0,
+      "format": "{value}%"
+    }
+  },
+
+  "decorators": {
+    "legend": { "enabled": false },
+    "cursor": { "enabled": false },
+    "scrollbarX": { "enabled": false }
+  },
+
+  "theme": {
+    "animated": true,
+    "mode": "Dark",
+    "background": "#000"
+  }
+}

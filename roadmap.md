@@ -19,9 +19,12 @@
 
 ## Families
 
+- [x] XY
 - [x] Scatter
-- [ ] Pie
-- [ ] Force
+- [x] Pie
+- [x] ForceTree
+- [x] Heatmap
+- [ ] Radar
 
 # Bigger Picture Stuff
 
@@ -49,7 +52,7 @@
 
 ## Scatter + Swarm
 
-- [ ] https://www.amcharts.com/demos/beeswarm/
+- [x] https://www.amcharts.com/demos/beeswarm/
 
 ## Pie
 
@@ -65,14 +68,14 @@
 - [ ] https://www.amcharts.com/demos/stacked-area-radar/
 - [ ] https://www.amcharts.com/demos/polar-chart/
 - [ ] https://www.amcharts.com/demos/polar-scatter/
-- [ ] https://www.amcharts.com/demos/radar-timeline/
-- [ ] https://www.amcharts.com/demos/solid-gauge/
 
 ## Guage
 
+- [ ] https://www.amcharts.com/demos/gauge-with-bands/
+- [ ] https://www.amcharts.com/demos/solid-gauge/
 - [ ] https://www.amcharts.com/demos/multi-part-gauge/
 - [ ] https://www.amcharts.com/demos/animated-gauge/
-- [ ] https://www.amcharts.com/demos/gauge-with-bands/
+  - I like this one because its like a bent progress bar (don't care about the animations part)
 
 ## Gantt
 
@@ -92,4 +95,10 @@
 
 ## HeatMap
 
-- [ ] https://www.amcharts.com/demos/heat-map-with-legend/
+- [x] https://www.amcharts.com/demos/heat-map-with-legend/
+
+## Others
+
+- [ ] https://www.amcharts.com/demos/forest-plot/
+- [ ] https://www.amcharts.com/demos/range-bullet-chart/
+- [ ] https://www.amcharts.com/demos/radar-timeline/

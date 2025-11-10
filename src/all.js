@@ -11,6 +11,8 @@ const files = [
   "./config/donut-config.json",
   "./config/force-tree-basic.json",
   "./config/beeswarm-basic.json",
+  "./config/heatmap-basic.json",
+  "./config/gauge-banded.json",
 ];
 
 (async function bootstrap() {

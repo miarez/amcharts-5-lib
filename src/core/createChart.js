@@ -4,6 +4,8 @@ import { createXYScatterChart } from "../families/xyScatter.js";
 import { createPieChart } from "../families/pie.js";
 import { createForceTreeChart } from "../families/forceTree.js";
 import { createBeeswarmChart } from "../families/beeswarm.js";
+import { createHeatmapChart } from "../families/heatmap.js";
+import { createGaugeChart } from "../families/gauge.js";
 
 // Centralized root + theme creation
 function createRoot(config) {
@@ -54,6 +56,13 @@ export function createChart(config) {
 
     case "beeswarm":
       return createBeeswarmChart(root, config);
+
+    case "heatmap":
+    case "category-matrix": // optional alias
+      return createHeatmapChart(root, config);
+
+    case "gauge":
+      return createGaugeChart(root, config);
 
     default:
       // avoid leaking a root on bad config
