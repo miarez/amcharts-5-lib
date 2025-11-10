@@ -12,7 +12,10 @@ const files = [
   "./config/force-tree-basic.json",
   "./config/beeswarm-basic.json",
   "./config/heatmap-basic.json",
-  "./config/gauge-banded.json",
+  "./config/gauge-basic.json",
+  "./config/radar-stacked.json",
+  "./config/polar-basic.json",
+  "./config/polar-scatter.json",
 ];
 
 (async function bootstrap() {

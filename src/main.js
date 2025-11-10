@@ -14,9 +14,12 @@ import { createChart } from "./core/createChart.js";
     "./config/bubble-pie.json",
     "./config/beeswarm-basic.json",
     "./config/heatmap-basic.json",
-    "./config/gauge-banded.json",
+    "./config/gauge-basic.json",
+    "./config/radar-stacked.json",
+    "./config/polar-basic.json",
+    "./config/polar-scatter.json",
   ];
-  const file = files[10];
+  const file = files[13];
 
   const config = await fetch(file).then((r) => r.json());
 

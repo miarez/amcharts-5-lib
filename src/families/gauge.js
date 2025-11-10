@@ -1,27 +1,34 @@
 // src/families/gauge.js
 import { applyChartBackground } from "../core/applyChartBackground.js";
-
-function resolveColor(value, fallback) {
-  if (typeof value === "number") return am5.color(value);
-  if (typeof value === "string") {
-    if (value.startsWith("0x")) return am5.color(parseInt(value, 16));
-    return am5.color(value); // "#cc4748", "red", etc.
-  }
-  return am5.color(fallback);
-}
+import { resolveColor } from "../utils/utils.js";
 
 export function createGaugeChart(root, config) {
-  const options = config.options || {};
+  const variant = config.variant || "bands"; // future: "solid", "multi-part", "progress"
+
+  if (variant !== "bands") {
+    console.warn(
+      `[gauge] Variant '${variant}' not implemented yet – falling back to 'bands'.`
+    );
+  }
+
   const axesCfg = config.axes || {};
   const valueAxisCfg = axesCfg.value || {};
+  const options = config.options || {};
   const fields = config.fields || {};
+  const scale = config.scale || {};
 
   const valueField = fields.value || "value";
+
   const min = valueAxisCfg.min ?? 0;
   const max = valueAxisCfg.max ?? 100;
 
-  const startAngle = options.startAngle ?? 180;
-  const endAngle = options.endAngle ?? 360;
+  const startAngle = valueAxisCfg.startAngle ?? options.startAngle ?? 180;
+  const endAngle = valueAxisCfg.endAngle ?? options.endAngle ?? 360;
+
+  const innerRadius = options.innerRadius ?? -20;
+
+  const tickLabelRadius = options.tickLabelRadius ?? 10;
+  const bandLabelRadius = options.bandLabelRadius ?? -25;
 
   // ----- CHART -----
   const chart = root.container.children.push(
@@ -35,17 +42,24 @@ export function createGaugeChart(root, config) {
 
   applyChartBackground(root, chart, config);
 
-  // ----- AXIS -----
+  // ----- AXIS RENDERER -----
   const axisRenderer = am5radar.AxisRendererCircular.new(root, {
-    innerRadius: options.innerRadius ?? -20, // thin ring near outer edge
+    innerRadius,
   });
 
+  // hide grid arcs if you don't want them
   axisRenderer.grid.template.setAll({
-    stroke: root.interfaceColors.get("background"),
-    visible: true,
-    strokeOpacity: 0.8,
+    visible: false,
+    strokeOpacity: 0.1,
   });
 
+  // kill tick marks (those little black lines)
+  axisRenderer.ticks.template.setAll({
+    visible: false,
+    strokeOpacity: 0,
+  });
+
+  // ----- VALUE AXIS -----
   const xAxis = chart.xAxes.push(
     am5xy.ValueAxis.new(root, {
       maxDeviation: 0,
@@ -56,23 +70,23 @@ export function createGaugeChart(root, config) {
     })
   );
 
+  // numeric labels OUTSIDE the band
   xAxis.get("renderer").labels.template.setAll({
-    // numbers slightly outside the band
-    radius: options.tickLabelRadius ?? 10,
+    radius: tickLabelRadius,
     inside: false,
-    fontSize: 20,
+    fontSize: 12,
   });
 
   // ----- CLOCK HAND -----
   const axisDataItem = xAxis.makeDataItem({});
 
   const clockHand = am5radar.ClockHand.new(root, {
-    pinRadius: options.pinRadius ?? am5.percent(8),
-    radius: options.handRadius ?? am5.percent(90),
-    bottomWidth: options.handBottomWidth ?? 15,
+    pinRadius: am5.percent(8),
+    radius: am5.percent(90),
+    bottomWidth: 15,
   });
 
-  const bullet = axisDataItem.set(
+  axisDataItem.set(
     "bullet",
     am5xy.AxisBullet.new(root, {
       sprite: clockHand,
@@ -82,36 +96,43 @@ export function createGaugeChart(root, config) {
   xAxis.createAxisRange(axisDataItem);
 
   // ----- CENTER LABEL -----
-  const labelCfg = options.label || {};
+  const centerCfg = options.centerLabel || {};
+
   const centerLabel = chart.radarContainer.children.push(
     am5.Label.new(root, {
       fill: root.interfaceColors.get("text"),
       centerX: am5.percent(50),
       centerY: am5.percent(50),
       textAlign: "center",
-      fontSize: labelCfg.fontSize ?? "2em",
+      fontSize: centerCfg.fontSize ?? "2em",
     })
   );
 
   const formatValueText = (v) => {
-    const decimals = labelCfg.decimals ?? 0;
+    const decimals = centerCfg.decimals ?? 0;
     const base = v.toFixed(decimals);
-    const fmt = labelCfg.format || "{value}%";
+    const fmt = centerCfg.format || "{value}";
     return fmt.replace("{value}", base);
   };
 
-  // ----- BANDS (AXIS RANGES) -----
-  const bands = options.bands || [];
+  // ----- BANDS (scale.bands) -----
+  let bands = [];
+  if (Array.isArray(scale.bands)) {
+    bands = scale.bands;
+  } else if (scale.bands && Array.isArray(scale.bands.items)) {
+    bands = scale.bands.items;
+  }
+
   bands.forEach((band) => {
     const start = band.start ?? band.lowScore ?? min;
     const end = band.end ?? band.highScore ?? max;
 
-    const axisRange = xAxis.createAxisRange(xAxis.makeDataItem({}));
-
-    axisRange.setAll({
+    const rangeDataItem = xAxis.makeDataItem({
       value: start,
       endValue: end,
     });
+
+    const axisRange = xAxis.createAxisRange(rangeDataItem);
 
     axisRange.get("axisFill").setAll({
       visible: true,
@@ -123,13 +144,16 @@ export function createGaugeChart(root, config) {
       axisRange.get("label").setAll({
         text: band.label,
         inside: true,
-        radius: 20,
-        fontSize: band.fontSize ?? 20,
+        radius: bandLabelRadius,
+        fontSize: band.fontSize ?? 12,
+        fill: root.interfaceColors.get("text"),
       });
     }
   });
 
-  // ----- PICK HAND COLOR + LABEL FROM BAND -----
+  // ----- COLOR HAND & LABEL BY BAND -----
+  const bullet = axisDataItem.get("bullet");
+
   bullet.get("sprite").on("rotation", function () {
     const value = axisDataItem.get("value");
     let fill = root.interfaceColors.get("text");
@@ -159,24 +183,19 @@ export function createGaugeChart(root, config) {
     });
   });
 
-  // ----- RESOLVE VALUE FROM DATA -----
-  let value = 0;
-  const rawData = config.data;
+  // ----- VALUE FROM DATA (NOT CONFIG) -----
+  let value = min;
 
-  if (Array.isArray(rawData) && rawData.length) {
-    const row = rawData[0];
+  const dataRows = Array.isArray(config.data) ? config.data : [];
+  if (dataRows.length) {
+    const row = dataRows[0];
     const v = Number(row[valueField] ?? row.value);
     if (!Number.isNaN(v)) value = v;
-  } else if (rawData && typeof rawData === "object" && "value" in rawData) {
-    const v = Number(rawData.value);
-    if (!Number.isNaN(v)) value = v;
-  } else if (typeof rawData === "number") {
-    value = rawData;
-  } else if (typeof options.value === "number") {
-    value = options.value;
+  } else {
+    console.warn("[gauge] No data rows found; defaulting value to min.");
   }
 
-  // clamp to [min, max]
+  // clamp into [min, max]
   if (value < min) value = min;
   if (value > max) value = max;
 

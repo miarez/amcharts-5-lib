@@ -16,6 +16,7 @@
 - [ ] Scatter trendline to display the slope maybe? or statistical facts.
 - [ ] Potentially add stuff like prediction lines, stats, etc
 - [ ] reference libs in index only based on charts I'll actually need (optimization nitpick)
+- [ ] Automatic fontsizing, bullet sizing, labels, etc based on chart size (no hard-coding)
 
 ## Families
 
@@ -24,7 +25,7 @@
 - [x] Pie
 - [x] ForceTree
 - [x] Heatmap
-- [ ] Radar
+- [x] Radar
 
 # Bigger Picture Stuff
 

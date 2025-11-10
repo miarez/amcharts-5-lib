@@ -6,6 +6,7 @@ import { createForceTreeChart } from "../families/forceTree.js";
 import { createBeeswarmChart } from "../families/beeswarm.js";
 import { createHeatmapChart } from "../families/heatmap.js";
 import { createGaugeChart } from "../families/gauge.js";
+import { createRadialSeriesChart } from "../families/radialSeries.js";
 
 // Centralized root + theme creation
 function createRoot(config) {
@@ -63,6 +64,9 @@ export function createChart(config) {
 
     case "gauge":
       return createGaugeChart(root, config);
+
+    case "radial-series":
+      return createRadialSeriesChart(root, config);
 
     default:
       // avoid leaking a root on bad config

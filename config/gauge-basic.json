@@ -1,0 +1,62 @@
+{
+  "id": "gauge-basic",
+  "family": "gauge",
+  "variant": "bands",
+
+  "container": "chartdiv",
+
+  "data": {
+    "type": "csv",
+    "url": "./data/gauge-basic.csv",
+    "delimiter": ","
+  },
+
+  "fields": {
+    "value": "value"
+  },
+
+  "axes": {
+    "value": {
+      "min": 0,
+      "max": 100,
+      "startAngle": 180,
+      "endAngle": 360,
+      "numberFormat": "#'%'"
+    }
+  },
+
+  "scale": {
+    "bands": [
+      { "start": 0, "end": 50, "label": "Low", "color": "#84b761" },
+      { "start": 50, "end": 80, "label": "Medium", "color": "#fdd400" },
+      { "start": 80, "end": 100, "label": "High", "color": "#cc4748" }
+    ]
+  },
+
+  "options": {
+    "innerRadius": -20,
+
+    "centerLabel": {
+      "fontSize": 32,
+      "decimals": 0,
+      "format": "{value}%"
+    },
+
+    "hand": {
+      "style": "needle"
+    },
+
+    "tickLabelRadius": 10,
+    "bandLabelRadius": -25
+  },
+
+  "decorators": {
+    "legend": { "enabled": false },
+    "cursor": { "enabled": false },
+    "scrollbarX": { "enabled": false }
+  },
+
+  "theme": {
+    "animated": true
+  }
+}

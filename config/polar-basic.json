@@ -1,0 +1,51 @@
+{
+  "id": "polar-basic",
+  "family": "radial-series",
+  "variant": "polar",
+
+  "container": "chartdiv",
+
+  "data": {
+    "type": "csv",
+    "url": "./data/polar-basic.csv",
+    "delimiter": ","
+  },
+
+  "fields": {
+    "angle": "category"
+  },
+
+  "axes": {
+    "angle": {
+      "type": "category",
+      "startAngle": 0,
+      "endAngle": 360,
+      "showGrid": false
+    },
+    "radius": {
+      "min": 0,
+      "strictMinMax": false
+    }
+  },
+
+  "series": [
+    {
+      "name": "Visits",
+      "valueField": "value"
+    }
+  ],
+
+  "options": {
+    "innerRadius": 40
+  },
+
+  "decorators": {
+    "legend": { "enabled": false },
+    "cursor": { "enabled": false },
+    "scrollbarX": { "enabled": false }
+  },
+
+  "theme": {
+    "animated": true
+  }
+}

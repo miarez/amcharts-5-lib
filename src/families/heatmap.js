@@ -3,19 +3,7 @@ import { applyChartBackground } from "../core/applyChartBackground.js";
 import { withCursor } from "../decorators/withCursor.js";
 import { withScrollbars } from "../decorators/withScrollBars.js";
 import { withLegend } from "../decorators/withLegend.js";
-
-function resolveColor(value, fallback) {
-  if (typeof value === "number") {
-    return am5.color(value);
-  }
-  if (typeof value === "string") {
-    if (value.startsWith("0x")) {
-      return am5.color(parseInt(value, 16));
-    }
-    return am5.color(value); // "#fffb77", "red", etc.
-  }
-  return am5.color(fallback);
-}
+import { resolveColor } from "../utils/utils.js";
 
 export function createHeatmapChart(root, config) {
   // ----- CHART -----
