@@ -3,8 +3,6 @@ import { createXYSeriesChart } from "../families/xySeries.js";
 import { createXYScatterChart } from "../families/xyScatter.js";
 import { createPieChart } from "../families/pie.js"; // ⬅️ add this
 import { createForceTreeChart } from "../families/forceTree.js";
-import { createBubblePieChart } from "../families/bubblePie.js";
-import { createBeeswarmChart } from "../families/beeswarm.js";
 
 // Centralized root + theme creation
 function createRoot(config) {
@@ -52,12 +50,6 @@ export function createChart(config) {
 
     case "force-tree":
       return createForceTreeChart(root, config);
-
-    case "bubble-pie":
-      return createBubblePieChart(root, config);
-
-    case "beeswarm":
-      return createBeeswarmChart(root, config);
 
     default:
       // avoid leaking a root on bad config

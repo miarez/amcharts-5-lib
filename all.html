@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Chart Library Dashboard</title>
+
+    <!-- amCharts 5 core + modules -->
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/hierarchy.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Dark.js"></script>
+
+    <style>
+      body {
+        background-color: #03002e;
+      }
+      .chart-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 1rem;
+        padding: 1rem;
+      }
+
+      .chart-card {
+        background: #050505;
+        border-radius: 8px;
+        padding: 0.5rem;
+        min-height: 220px;
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04);
+      }
+
+      .chart-title {
+        font-size: 0.9rem;
+        margin: 0 0 0.25rem;
+      }
+
+      .chart-container {
+        flex: 1 1 auto;
+        min-height: 180px;
+      }
+
+      .chart-title {
+        color: #fff;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="dashboard" class="chart-grid"></div>
+
+    <script type="module" src="./src/all.js"></script>
+  </body>
+</html>
