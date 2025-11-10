@@ -3,35 +3,99 @@ import { applyChartBackground } from "../core/applyChartBackground.js";
 import { withLegend } from "../decorators/withLegend.js";
 
 export function createRadialSeriesChart(root, config) {
-  const variant = config.variant || "stacked-radar"; // "polar", "polar-scatter" later
+  const variant = config.variant || "stacked-radar"; // "polar", "polar-scatter"
 
-  const data = Array.isArray(config.data) ? config.data : [];
+  // ----- RAW DATA & CONFIG -----
+  const rawData = Array.isArray(config.data) ? config.data : [];
+  let data = rawData.slice(); // we'll transform this in some cases
+
   const fields = config.fields || {};
   const axesCfg = config.axes || {};
   const angleCfg = axesCfg.angle || {};
   const radiusCfg = axesCfg.radius || {};
   const options = config.options || {};
 
-  const angleField = fields.angle || "category";
   const seriesDefs = Array.isArray(config.series) ? config.series : [];
 
-  const angleType = angleCfg.type || "category"; // "category" or "value"
+  // Named fields
+  let angleField = fields.angle || "category"; // may be overwritten
+  const xField = fields.x || null;
+  const yField = fields.y || null;
+  const sizeField = fields.size || "size"; // not used yet but ready
 
-  const startAngle = angleCfg.startAngle ?? options.startAngle ?? 0;
-  const endAngle = angleCfg.endAngle ?? options.endAngle ?? 360;
+  const angleTypeFromConfig = angleCfg.type || "category"; // "category" or "value"
+  let angleType = angleTypeFromConfig;
 
-  const innerRadius = options.innerRadius ?? 0;
+  const isPolarScatter = variant === "polar-scatter";
+
+  // For auto radius bounds when we map x,y
+  let inferredRadiusMin = null;
+  let inferredRadiusMax = null;
+
+  // ----- CARTESIAN INPUT → POLAR (FOR POLAR-SCATTER) -----
+  // If user didn't give an explicit angle field but DID give x & y,
+  // we treat (x,y) as cartesian and map x linearly to angle.
+  if (isPolarScatter && !fields.angle && xField && yField) {
+    const startAngle = angleCfg.startAngle ?? options.startAngle ?? 0;
+    const endAngle = angleCfg.endAngle ?? options.endAngle ?? 360;
+
+    let xMin = Infinity;
+    let xMax = -Infinity;
+    let yMin = Infinity;
+    let yMax = -Infinity;
+
+    data.forEach((row) => {
+      const x = Number(row[xField]);
+      const y = Number(row[yField]);
+
+      if (!Number.isNaN(x)) {
+        if (x < xMin) xMin = x;
+        if (x > xMax) xMax = x;
+      }
+      if (!Number.isNaN(y)) {
+        if (y < yMin) yMin = y;
+        if (y > yMax) yMax = y;
+      }
+    });
+
+    if (xMin === Infinity || xMax === -Infinity) {
+      console.warn("[radial-series] polar-scatter: no valid x values to map.");
+    } else {
+      const xSpan = xMax - xMin || 1; // avoid divide by zero
+      const angleSpan = endAngle - startAngle;
+
+      data = data.map((row) => {
+        const x = Number(row[xField]);
+        const normalizedX = (x - xMin) / xSpan;
+        const angle = startAngle + normalizedX * angleSpan;
+
+        return {
+          ...row,
+          _angle: angle,
+          // y stays as-is; we use series valueField to pick radius
+        };
+      });
+
+      angleField = "_angle";
+      angleType = "value";
+
+      inferredRadiusMin = yMin;
+      inferredRadiusMax = yMax;
+    }
+  }
 
   // ----- CHART -----
+  const innerRadiusPercent = options.innerRadius ?? 0;
+
   const chart = root.container.children.push(
     am5radar.RadarChart.new(root, {
       panX: false,
       panY: false,
       wheelX: "none",
       wheelY: "none",
-      startAngle,
-      endAngle,
-      innerRadius: innerRadius ? am5.percent(innerRadius) : 0,
+      startAngle: angleCfg.startAngle ?? options.startAngle ?? 0,
+      endAngle: angleCfg.endAngle ?? options.endAngle ?? 360,
+      innerRadius: innerRadiusPercent ? am5.percent(innerRadiusPercent) : 0,
     })
   );
 
@@ -39,7 +103,7 @@ export function createRadialSeriesChart(root, config) {
 
   // ----- ANGLE AXIS (X) -----
   let angleAxis;
-  let angleRenderer = am5radar.AxisRendererCircular.new(root, {
+  const angleRenderer = am5radar.AxisRendererCircular.new(root, {
     minGridDistance: angleCfg.minGridDistance ?? 30,
   });
 
@@ -75,16 +139,37 @@ export function createRadialSeriesChart(root, config) {
     radiusRenderer.grid.template.set("visible", false);
   }
 
+  let radiusMin = radiusCfg.min;
+  let radiusMax = radiusCfg.max;
+
+  if (radiusMin == null && inferredRadiusMin != null) {
+    radiusMin = inferredRadiusMin;
+  }
+  if (radiusMax == null && inferredRadiusMax != null) {
+    radiusMax = inferredRadiusMax;
+  }
+
   const radiusAxis = chart.yAxes.push(
     am5xy.ValueAxis.new(root, {
       renderer: radiusRenderer,
-      min: radiusCfg.min ?? 0,
-      max: radiusCfg.max ?? undefined,
+      min: radiusMin ?? 0,
+      max: radiusMax ?? undefined,
       strictMinMax: !!radiusCfg.strictMinMax,
     })
   );
 
-  // ----- SERIES CREATION HELPERS -----
+  // ----- ANGLE FIELD HELPER -----
+  function applyAngleField(seriesOptions) {
+    if (angleType === "value") {
+      seriesOptions.valueXField = angleField; // numeric angle
+    } else {
+      seriesOptions.categoryXField = angleField; // categorical angle
+    }
+    return seriesOptions;
+  }
+
+  // ----- SERIES HELPERS -----
+
   function createStackedRadarSeries(seriesDef) {
     const valueField = seriesDef.valueField;
     if (!valueField) {
@@ -93,15 +178,17 @@ export function createRadialSeriesChart(root, config) {
     }
 
     const series = chart.series.push(
-      am5radar.RadarLineSeries.new(root, {
-        name: seriesDef.name || valueField,
-        xAxis: angleAxis,
-        yAxis: radiusAxis,
-        categoryXField: angleField,
-        valueYField: valueField,
-        stacked: true,
-        tooltipText: `{${angleField}}: {${valueField}}`,
-      })
+      am5radar.RadarLineSeries.new(
+        root,
+        applyAngleField({
+          name: seriesDef.name || valueField,
+          xAxis: angleAxis,
+          yAxis: radiusAxis,
+          valueYField: valueField,
+          stacked: true,
+          tooltipText: `{${angleField}}: {${valueField}}`,
+        })
+      )
     );
 
     series.strokes.template.setAll({
@@ -119,18 +206,23 @@ export function createRadialSeriesChart(root, config) {
 
   function createPolarColumnSeries(seriesDef) {
     const valueField = seriesDef.valueField;
-    if (!valueField) return null;
+    if (!valueField) {
+      console.warn("[radial-series] Missing valueField for series", seriesDef);
+      return null;
+    }
 
     const series = chart.series.push(
-      am5radar.RadarColumnSeries.new(root, {
-        name: seriesDef.name || valueField,
-        xAxis: angleAxis,
-        yAxis: radiusAxis,
-        categoryXField: angleField,
-        valueYField: valueField,
-        clustered: false,
-        tooltipText: `{${angleField}}: {${valueField}}`,
-      })
+      am5radar.RadarColumnSeries.new(
+        root,
+        applyAngleField({
+          name: seriesDef.name || valueField,
+          xAxis: angleAxis,
+          yAxis: radiusAxis,
+          valueYField: valueField,
+          clustered: false,
+          tooltipText: `{${angleField}}: {${valueField}}`,
+        })
+      )
     );
 
     series.columns.template.setAll({
@@ -145,21 +237,31 @@ export function createRadialSeriesChart(root, config) {
 
   function createPolarScatterSeries(seriesDef) {
     const valueField = seriesDef.valueField;
-    if (!valueField) return null;
+    if (!valueField) {
+      console.warn("[radial-series] Missing valueField for series", seriesDef);
+      return null;
+    }
+
+    const tooltip =
+      angleType === "value"
+        ? `{${angleField}}°: {${valueField}}`
+        : `{${angleField}}: {${valueField}}`;
 
     const series = chart.series.push(
-      am5radar.RadarLineSeries.new(root, {
-        name: seriesDef.name || valueField,
-        xAxis: angleAxis,
-        yAxis: radiusAxis,
-        categoryXField: angleField,
-        valueYField: valueField,
-        strokeOpacity: 0, // try to hide line…
-        tooltipText: `{${angleField}}: {${valueField}}`,
-      })
+      am5radar.RadarLineSeries.new(
+        root,
+        applyAngleField({
+          name: seriesDef.name || valueField,
+          xAxis: angleAxis,
+          yAxis: radiusAxis,
+          valueYField: valueField,
+          strokeOpacity: 0, // try to kill line in constructor
+          tooltipText: tooltip,
+        })
+      )
     );
 
-    // …and *force* it off here so themes can't resurrect it
+    // Hard-kill any line stroke so it's pure scatter by default
     series.strokes.template.setAll({
       visible: false,
       strokeOpacity: 0,
@@ -168,9 +270,9 @@ export function createRadialSeriesChart(root, config) {
     series.bullets.push(() =>
       am5.Bullet.new(root, {
         sprite: am5.Circle.new(root, {
-          radius: 4,
+          radius: 5,
           fill: series.get("fill"),
-          tooltipText: `{${angleField}}: {${valueField}}`,
+          tooltipText: tooltip,
         }),
       })
     );

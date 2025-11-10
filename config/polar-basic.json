@@ -46,6 +46,8 @@
   },
 
   "theme": {
-    "animated": true
+    "animated": true,
+    "mode": "Dark",
+    "background": "#000000"
   }
 }

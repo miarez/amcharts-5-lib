@@ -12,44 +12,29 @@
   },
 
   "fields": {
-    "angle": "category"
+    "x": "x",
+    "y": "y",
+    "size": "size"
   },
 
   "axes": {
     "angle": {
-      "type": "category",
+      "type": "value",
       "startAngle": 0,
-      "endAngle": 360,
-      "showGrid": false
+      "endAngle": 360
     },
     "radius": {
-      "min": 0,
-      "strictMinMax": false
+      "min": 0
     }
   },
 
-  "series": [
-    {
-      "name": "Group A",
-      "valueField": "valueA"
-    },
-    {
-      "name": "Group B",
-      "valueField": "valueB"
-    }
-  ],
+  "series": [{ "name": "Points", "valueField": "y" }],
 
   "options": {
     "innerRadius": 0
   },
 
   "decorators": {
-    "legend": { "enabled": true },
-    "cursor": { "enabled": false },
-    "scrollbarX": { "enabled": false }
-  },
-
-  "theme": {
-    "animated": true
+    "legend": { "enabled": false }
   }
 }
