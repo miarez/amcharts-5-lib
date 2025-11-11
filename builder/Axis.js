@@ -51,6 +51,7 @@ export class ValueAxis extends AxisBase {
   constructor(id) {
     super(id);
     this._axis.type = "value";
+    this._axis.stacked = false;
   }
 
   min(v) {
@@ -70,6 +71,11 @@ export class ValueAxis extends AxisBase {
 
   logarithmic(flag = true) {
     this._axis.logarithmic = !!flag;
+    return this;
+  }
+
+  stacked(stacked) {
+    this._axis.stacked = stacked;
     return this;
   }
 }

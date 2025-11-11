@@ -6,6 +6,8 @@ import { withLegend } from "../../../decorators/withLegend.js";
 import { withCursor } from "../../../decorators/withCursor.js";
 import { withScrollbars } from "../../../decorators/withScrollbars.js";
 
+const STACKABLE_GEOMS = new Set(["column", "bar", "area"]);
+
 export function buildCatSeriesChart(root, config) {
   const engine = config.engine || {};
   const data = Array.isArray(config.data) ? config.data : [];
@@ -46,6 +48,18 @@ export function buildCatSeriesChart(root, config) {
   xAxis.data.setAll(data);
 
   const firstY = yCfgs[0] || {};
+
+  // axis stacking mode:
+  // - if you later support "percent", you can use firstY.stacking: "percent"
+  // - right now you’re using firstY.stacked: true
+  const axisStacking = (() => {
+    if (typeof firstY.stacking === "string") {
+      return firstY.stacking.toLowerCase(); // "none" | "stacked" | "percent"
+    }
+    if (firstY.stacked) return "stacked";
+    return "none";
+  })();
+
   const yAxis = chart.yAxes.push(
     am5xy.ValueAxis.new(root, {
       renderer: am5xy.AxisRendererY.new(root, {}),
@@ -53,6 +67,10 @@ export function buildCatSeriesChart(root, config) {
       max: firstY.max,
     })
   );
+
+  if (axisStacking === "percent") {
+    yAxis.set("calculateTotals", true);
+  }
 
   // --- SERIES ---
 
@@ -67,6 +85,13 @@ export function buildCatSeriesChart(root, config) {
       SeriesClass = am5xy.LineSeries;
     }
 
+    const isStackableGeom = STACKABLE_GEOMS.has(geom);
+
+    const tooltipText =
+      axisStacking === "percent"
+        ? "{name}: {valueYTotalPercent.formatNumber('0.0')}"
+        : "{name}: {valueY}";
+
     const s = chart.series.push(
       SeriesClass.new(root, {
         name: sDef.name || vf,
@@ -75,12 +100,12 @@ export function buildCatSeriesChart(root, config) {
         categoryXField: categoryField,
         valueYField: vf,
         tooltip: am5.Tooltip.new(root, {
-          labelText: "{name}: {valueY}",
+          labelText: tooltipText,
         }),
       })
     );
 
-    // basic styling based on geom
+    // styling for line/area
     if (geom === "line") {
       s.strokes.template.setAll({
         strokeWidth: sDef.strokeWidth ?? 2,
@@ -98,11 +123,14 @@ export function buildCatSeriesChart(root, config) {
       });
     }
 
-    // optional color handling if you add sDef.color later
-    if (sDef.color) {
-      const c = am5.color(sDef.color);
-      s.strokes.template.setAll({ stroke: c });
-      s.fills.template.setAll({ fill: c });
+    // --- STACKING LOGIC ---
+    if (axisStacking !== "none" && isStackableGeom) {
+      s.set("stacked", true);
+
+      if (axisStacking === "percent") {
+        // show percent-of-total instead of raw value
+        s.set("valueYShow", "valueYTotalPercent");
+      }
     }
 
     s.data.setAll(data);

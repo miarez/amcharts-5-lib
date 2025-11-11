@@ -13,7 +13,7 @@
  *   pp.hr("Checkpoint");
  */
 
-let DEBUG_ENABLED = false;
+let DEBUG_ENABLED = true;
 
 /**
  * Enable debug mode globally.

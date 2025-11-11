@@ -2,12 +2,19 @@
 
 import { columnChart } from "../charts/xy/catSeries/column.js";
 import { lineChart } from "../charts/xy/catSeries/line.js";
+import { areaChart } from "../charts/xy/catSeries/area.js";
+import { stackedColumnChart } from "../charts/xy/catSeries/stackedColumn.js";
+import { stackedAreaChart } from "../charts/xy/catSeries/stackedArea.js";
+import { comboChart } from "../charts/xy/catSeries/combo.js";
 
 const registry = {
   xy: {
     column: columnChart,
     line: lineChart,
-    // later: area, stackedColumn, etc.
+    area: areaChart,
+    stackedcolumn: stackedColumnChart,
+    stackedarea: stackedAreaChart,
+    combo: comboChart,
   },
 };
 
