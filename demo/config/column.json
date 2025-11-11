@@ -1,0 +1,43 @@
+{
+  "container": "chartdiv",
+  "dataLoader": {
+    "type": "csv",
+    "url": "./data/column.csv",
+    "delimiter": ","
+  },
+  "engine": {
+    "engineType": "XY",
+    "chartType": "column",
+    "categoryField": "month",
+    "axes": {
+      "x": {
+        "id": "x",
+        "type": "category",
+        "grid": true,
+        "position": "bottom",
+        "title": "Months of the Year"
+      },
+      "y": [{ "id": "y", "type": "value", "grid": true, "position": "left" }]
+    },
+    "series": [
+      {
+        "field": "revenue",
+        "name": "Revenue",
+        "geom": "column",
+        "axis": "y",
+        "xAxisId": "x",
+        "xField": "month"
+      }
+    ]
+  },
+  "theme": { "animated": true, "mode": "Dark", "background": "#000000" },
+  "legend": { "enabled": true },
+  "cursor": {
+    "enabled": true,
+    "behavior": "none",
+    "showLineX": true,
+    "showLineY": true,
+    "xAxisTooltip": { "enabled": true, "categoryFormat": "{value}" }
+  },
+  "scrollbars": { "x": { "enabled": true }, "y": { "enabled": true } }
+}
