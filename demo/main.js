@@ -2,9 +2,10 @@
 
 import { createChart } from "../src/core/createChart.js";
 import { loadData, normalizeDataForEngine } from "../src/utils/loadData.js";
-import chartConfig from "./config/column.js";
+import chartConfig from "./config/multi-lines.js";
 import { pp, debug } from "../src/utils/pp.js"; // optional, but handy
 
+debug();
 async function bootstrap() {
   try {
     // Enable debug logging if you want

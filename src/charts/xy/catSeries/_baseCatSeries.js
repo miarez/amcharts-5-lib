@@ -1,5 +1,4 @@
 // src/charts/xy/catSeries/_baseCatSeries.js
-import { debug, pp } from "../../../utils/pp.js";
 
 import { createXYChart } from "../../../engines/xyEngine.js";
 import { applyChartBackground } from "../../../utils/applyChartBackground.js";
@@ -60,8 +59,16 @@ export function buildCatSeriesChart(root, config) {
   const series = seriesDefs.map((sDef) => {
     const vf = sDef.field || valueField;
 
+    // decide geometry: per-series geom > engine.chartType > "column"
+    const geom = (sDef.geom || engine.chartType || "column").toLowerCase();
+
+    let SeriesClass = am5xy.ColumnSeries;
+    if (geom === "line" || geom === "area") {
+      SeriesClass = am5xy.LineSeries;
+    }
+
     const s = chart.series.push(
-      am5xy.ColumnSeries.new(root, {
+      SeriesClass.new(root, {
         name: sDef.name || vf,
         xAxis,
         yAxis,
@@ -72,6 +79,31 @@ export function buildCatSeriesChart(root, config) {
         }),
       })
     );
+
+    // basic styling based on geom
+    if (geom === "line") {
+      s.strokes.template.setAll({
+        strokeWidth: sDef.strokeWidth ?? 2,
+      });
+      s.fills.template.set("visible", false);
+    }
+
+    if (geom === "area") {
+      s.strokes.template.setAll({
+        strokeWidth: sDef.strokeWidth ?? 2,
+      });
+      s.fills.template.setAll({
+        visible: true,
+        fillOpacity: sDef.fillOpacity ?? 0.4,
+      });
+    }
+
+    // optional color handling if you add sDef.color later
+    if (sDef.color) {
+      const c = am5.color(sDef.color);
+      s.strokes.template.setAll({ stroke: c });
+      s.fills.template.setAll({ fill: c });
+    }
 
     s.data.setAll(data);
     s.appear(800);
