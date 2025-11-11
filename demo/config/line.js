@@ -9,13 +9,7 @@ const chartConfig = new Chart()
     url: "./data/category-single-series.csv",
     delimiter: ",",
   })
-  .engine(
-    new XY()
-      .category("month")
-      .chartType("line")
-      .addSeries(new Series("revenue"))
-      .build()
-  )
+  .engine(new XY().category("month").addSeries(new Series("revenue")).build())
   .build();
 
 export default chartConfig;

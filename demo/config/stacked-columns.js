@@ -13,7 +13,6 @@ const chartConfig = new Chart()
   .engine(
     new XY()
       .category("month")
-      .chartType("stackedColumn")
       .addSeries(new Series("revenue").geom("column"))
       .addSeries(new Series("profit").geom("column"))
       .yAxis(new ValueAxis("y").title("SOUP").stacked(true))

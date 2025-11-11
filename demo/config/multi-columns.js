@@ -12,7 +12,6 @@ const chartConfig = new Chart()
   .engine(
     new XY()
       .category("month")
-      .chartType("column")
       .addSeries(new Series("revenue").geom("column"))
       .addSeries(new Series("profit").geom("column"))
       .build()
