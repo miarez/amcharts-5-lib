@@ -10,6 +10,7 @@ import { comboChart } from "../charts/xy/catSeries/combo.js";
 import { dotChart } from "../charts/xy/catSeries/dot.js";
 import { streamChart } from "../charts/xy/catSeries/stream.js";
 import { waterfallChart } from "../charts/xy/catSeries/waterfall.js";
+import { scatterChart } from "../charts/xy/seriesSeries/scatter.js";
 
 // catCat
 import { heatmapChart } from "../charts/xy/catCat/heatmap.js";
@@ -28,6 +29,8 @@ const registry = {
     waterfall: waterfallChart,
     // catCat
     heatmap: heatmapChart,
+    // seriesSeries
+    scatter: scatterChart,
   },
 };
 
