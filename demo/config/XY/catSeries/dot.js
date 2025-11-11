@@ -1,6 +1,6 @@
-import { XY } from "../../builder/XY.js";
-import { Series } from "../../builder/Series.js";
-import { Chart } from "../../builder/Chart.js";
+import { XY } from "../../../../builder/XY.js";
+import { Series } from "../../../../builder/Series.js";
+import { Chart } from "../../../../builder/Chart.js";
 
 const chartConfig = new Chart()
   .htmlContainer("chartdiv")
@@ -12,7 +12,7 @@ const chartConfig = new Chart()
   .engine(
     new XY()
       .category("month")
-      .addSeries(new Series("revenue").geom("area"))
+      .addSeries(new Series("revenue").geom("dot"))
       .build()
   )
   .build();

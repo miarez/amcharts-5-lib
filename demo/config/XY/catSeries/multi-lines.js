@@ -1,7 +1,6 @@
-import { XY } from "../../builder/XY.js";
-import { Series } from "../../builder/Series.js";
-import { Chart } from "../../builder/Chart.js";
-import { ValueAxis } from "../../builder/Axis.js";
+import { XY } from "../../../../builder/XY.js";
+import { Series } from "../../../../builder/Series.js";
+import { Chart } from "../../../../builder/Chart.js";
 
 const chartConfig = new Chart()
   .htmlContainer("chartdiv")
@@ -14,7 +13,7 @@ const chartConfig = new Chart()
     new XY()
       .category("month")
       .addSeries(new Series("revenue"))
-      .addSeries(new Series("profit").geom("column"))
+      .addSeries(new Series("profit"))
       .build()
   )
   .build();

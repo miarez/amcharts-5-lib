@@ -1,6 +1,6 @@
-import { XY } from "../../builder/XY.js";
-import { Series } from "../../builder/Series.js";
-import { Chart } from "../../builder/Chart.js";
+import { XY } from "../../../../builder/XY.js";
+import { Series } from "../../../../builder/Series.js";
+import { Chart } from "../../../../builder/Chart.js";
 
 const chartConfig = new Chart()
   .htmlContainer("chartdiv")

@@ -1,8 +1,7 @@
-import { XY } from "../../builder/XY.js";
-import { Series } from "../../builder/Series.js";
-import { Chart } from "../../builder/Chart.js";
-import { ValueAxis } from "../../builder/Axis.js";
-import { debug, pp } from "../../src/utils/pp.js";
+import { XY } from "../../../../builder/XY.js";
+import { Series } from "../../../../builder/Series.js";
+import { Chart } from "../../../../builder/Chart.js";
+
 const chartConfig = new Chart()
   .htmlContainer("chartdiv")
   .dataLoader({
@@ -15,11 +14,8 @@ const chartConfig = new Chart()
       .category("month")
       .addSeries(new Series("revenue").geom("area"))
       .addSeries(new Series("profit").geom("area"))
-      .yAxis(new ValueAxis("y").title("SOUP").stacked(true))
       .build()
   )
   .build();
-
-pp.log("HUR", chartConfig);
 
 export default chartConfig;

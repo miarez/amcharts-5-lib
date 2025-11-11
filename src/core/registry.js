@@ -1,4 +1,6 @@
 // src/core/registry.js
+
+// catSeries
 import { columnChart } from "../charts/xy/catSeries/column.js";
 import { lineChart } from "../charts/xy/catSeries/line.js";
 import { areaChart } from "../charts/xy/catSeries/area.js";
@@ -9,8 +11,12 @@ import { dotChart } from "../charts/xy/catSeries/dot.js";
 import { streamChart } from "../charts/xy/catSeries/stream.js";
 import { waterfallChart } from "../charts/xy/catSeries/waterfall.js";
 
+// catCat
+import { heatmapChart } from "../charts/xy/catCat/heatmap.js";
+
 const registry = {
   xy: {
+    // catSeries
     column: columnChart,
     line: lineChart,
     area: areaChart,
@@ -20,6 +26,8 @@ const registry = {
     dot: dotChart,
     stream: streamChart,
     waterfall: waterfallChart,
+    // catCat
+    heatmap: heatmapChart,
   },
 };
 

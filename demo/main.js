@@ -2,7 +2,7 @@
 
 import { createChart } from "../src/core/createChart.js";
 import { loadData, normalizeDataForEngine } from "../src/utils/loadData.js";
-import chartConfig from "./config/multi-axes.js";
+import chartConfig from "./config/XY/catCat/heatMap.js";
 import { pp, debug } from "../src/utils/pp.js"; // optional, but handy
 
 debug();
