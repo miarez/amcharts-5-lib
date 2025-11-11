@@ -54,7 +54,6 @@ Engine
 ```
 src/
   core/
-    applyBaseConfig.js   // config normalization
     createChart.js       // routing from chartType -> builder
     registry.js          // mapping "line" -> charts/xy/catSeries/line.js
     // other non-visual infra if needed
@@ -64,7 +63,8 @@ src/
     radialEngine.js
     pieEngine.js
     hierarchyEngine.js
-    // mapEngine.js, flowEngine.js later
+    mapEngine.js
+    flowEngine.js
 
   charts/
     xy/
@@ -77,6 +77,7 @@ src/
         line.js
         area.js
         column.js
+        combo.js (mixed line/column)
         stackedColumn.js
         stackedArea.js
         stream.js
