@@ -126,6 +126,14 @@ function inferChartTypeFromSeriesAndAxes(series, yAxes) {
       return "line";
     }
 
+    if (g === "dot") {
+      return "dot";
+    }
+
+    if (g === "stream") {
+      return "stream";
+    }
+
     return "column";
   }
 

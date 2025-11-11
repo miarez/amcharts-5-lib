@@ -1,11 +1,13 @@
 // src/core/registry.js
-
 import { columnChart } from "../charts/xy/catSeries/column.js";
 import { lineChart } from "../charts/xy/catSeries/line.js";
 import { areaChart } from "../charts/xy/catSeries/area.js";
 import { stackedColumnChart } from "../charts/xy/catSeries/stackedColumn.js";
 import { stackedAreaChart } from "../charts/xy/catSeries/stackedArea.js";
 import { comboChart } from "../charts/xy/catSeries/combo.js";
+import { dotChart } from "../charts/xy/catSeries/dot.js";
+import { streamChart } from "../charts/xy/catSeries/stream.js";
+import { waterfallChart } from "../charts/xy/catSeries/waterfall.js";
 
 const registry = {
   xy: {
@@ -15,6 +17,9 @@ const registry = {
     stackedcolumn: stackedColumnChart,
     stackedarea: stackedAreaChart,
     combo: comboChart,
+    dot: dotChart,
+    stream: streamChart,
+    waterfall: waterfallChart,
   },
 };
 

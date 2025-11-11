@@ -81,7 +81,7 @@ export function buildCatSeriesChart(root, config) {
     const geom = (sDef.geom || engine.chartType || "column").toLowerCase();
 
     let SeriesClass = am5xy.ColumnSeries;
-    if (geom === "line" || geom === "area") {
+    if (geom === "line" || geom === "area" || geom === "dot") {
       SeriesClass = am5xy.LineSeries;
     }
 
@@ -121,6 +121,21 @@ export function buildCatSeriesChart(root, config) {
         visible: true,
         fillOpacity: sDef.fillOpacity ?? 0.4,
       });
+    }
+
+    // 🔹 dot geom: no stroke, bullets only
+    if (geom === "dot") {
+      s.strokes.template.set("visible", false);
+      s.fills.template.set("visible", false);
+
+      s.bullets.push(() =>
+        am5.Bullet.new(root, {
+          sprite: am5.Circle.new(root, {
+            radius: sDef.radius ?? 5,
+            fill: s.get("fill"), // use series color
+          }),
+        })
+      );
     }
 
     // --- STACKING LOGIC ---
