@@ -1,5 +1,3 @@
-// src/charts/xy/catSeries/_baseCatSeries.js
-
 import { createXYChart } from "../../../engines/xyEngine.js";
 import { applyChartBackground } from "../../../utils/applyChartBackground.js";
 import { withLegend } from "../../../decorators/withLegend.js";
@@ -33,7 +31,7 @@ export function buildCatSeriesChart(root, config) {
   const firstSeries = seriesDefs[0];
   const valueField = firstSeries?.field;
 
-  // --- CHART + AXES ---
+  // --- CHART + X AXIS ---
 
   const { chart } = createXYChart(root, engine);
 
@@ -47,45 +45,79 @@ export function buildCatSeriesChart(root, config) {
   );
   xAxis.data.setAll(data);
 
-  const firstY = yCfgs[0] || {};
+  // --- Y AXES (multi-axis support) ---
 
-  // axis stacking mode:
-  // - if you later support "percent", you can use firstY.stacking: "percent"
-  // - right now you’re using firstY.stacked: true
-  const axisStacking = (() => {
-    if (typeof firstY.stacking === "string") {
-      return firstY.stacking.toLowerCase(); // "none" | "stacked" | "percent"
+  const yAxisById = new Map();
+  const axisStackingById = new Map();
+
+  yCfgs.forEach((yCfg, idx) => {
+    const id = yCfg.id || `y${idx}`;
+
+    const renderer = am5xy.AxisRendererY.new(root, {
+      opposite: yCfg.position === "right",
+    });
+
+    const yAxis = chart.yAxes.push(
+      am5xy.ValueAxis.new(root, {
+        renderer,
+        min: yCfg.min ?? 0,
+        max: yCfg.max,
+      })
+    );
+
+    yAxisById.set(id, yAxis);
+
+    let mode = "none";
+    if (typeof yCfg.stacking === "string") {
+      mode = yCfg.stacking.toLowerCase(); // "none" | "stacked" | "percent"
+    } else if (yCfg.stacked) {
+      mode = "stacked";
     }
-    if (firstY.stacked) return "stacked";
-    return "none";
-  })();
 
-  const yAxis = chart.yAxes.push(
-    am5xy.ValueAxis.new(root, {
-      renderer: am5xy.AxisRendererY.new(root, {}),
-      min: firstY.min ?? 0,
-      max: firstY.max,
-    })
-  );
+    if (mode === "percent") {
+      yAxis.set("calculateTotals", true);
+    }
 
-  if (axisStacking === "percent") {
-    yAxis.set("calculateTotals", true);
+    axisStackingById.set(id, mode);
+  });
+
+  // fallbacks if no yCfgs somehow
+  if (yAxisById.size === 0) {
+    const renderer = am5xy.AxisRendererY.new(root, {});
+    const yAxis = chart.yAxes.push(
+      am5xy.ValueAxis.new(root, { renderer, min: 0 })
+    );
+    yAxisById.set("y", yAxis);
+    axisStackingById.set("y", "none");
   }
+
+  const [primaryAxisId] = yAxisById.keys();
+  const primaryYAxis = yAxisById.get(primaryAxisId);
 
   // --- SERIES ---
 
   const series = seriesDefs.map((sDef) => {
     const vf = sDef.field || valueField;
 
-    // decide geometry: per-series geom > engine.chartType > "column"
     const geom = (sDef.geom || engine.chartType || "column").toLowerCase();
-
     let SeriesClass = am5xy.ColumnSeries;
-    if (geom === "line" || geom === "area" || geom === "dot") {
+    if (
+      geom === "line" ||
+      geom === "area" ||
+      geom === "dot" ||
+      geom === "stream"
+    ) {
       SeriesClass = am5xy.LineSeries;
     }
 
     const isStackableGeom = STACKABLE_GEOMS.has(geom);
+
+    // choose axis for this series
+    const axisIdFromSeries =
+      sDef.axis || sDef.valueAxisId || sDef.yAxisId || primaryAxisId;
+
+    const yAxis = yAxisById.get(axisIdFromSeries) || primaryYAxis;
+    const axisStacking = axisStackingById.get(axisIdFromSeries) || "none";
 
     const tooltipText =
       axisStacking === "percent"
@@ -105,7 +137,7 @@ export function buildCatSeriesChart(root, config) {
       })
     );
 
-    // styling for line/area
+    // styling for line/area/stream
     if (geom === "line") {
       s.strokes.template.setAll({
         strokeWidth: sDef.strokeWidth ?? 2,
@@ -113,7 +145,7 @@ export function buildCatSeriesChart(root, config) {
       s.fills.template.set("visible", false);
     }
 
-    if (geom === "area") {
+    if (geom === "area" || geom === "stream") {
       s.strokes.template.setAll({
         strokeWidth: sDef.strokeWidth ?? 2,
       });
@@ -123,27 +155,24 @@ export function buildCatSeriesChart(root, config) {
       });
     }
 
-    // 🔹 dot geom: no stroke, bullets only
+    // dot → bullets only
     if (geom === "dot") {
       s.strokes.template.set("visible", false);
       s.fills.template.set("visible", false);
-
       s.bullets.push(() =>
         am5.Bullet.new(root, {
           sprite: am5.Circle.new(root, {
             radius: sDef.radius ?? 5,
-            fill: s.get("fill"), // use series color
+            fill: s.get("fill"),
           }),
         })
       );
     }
 
-    // --- STACKING LOGIC ---
+    // stacking per axis
     if (axisStacking !== "none" && isStackableGeom) {
       s.set("stacked", true);
-
       if (axisStacking === "percent") {
-        // show percent-of-total instead of raw value
         s.set("valueYShow", "valueYTotalPercent");
       }
     }
@@ -153,16 +182,20 @@ export function buildCatSeriesChart(root, config) {
     return s;
   });
 
-  // --- THEME BACKGROUND ---
+  // --- THEME + DECORATORS ---
 
   if (config.theme && config.theme.background) {
     applyChartBackground(root, chart, config.theme.background);
   }
 
-  // --- DECORATORS: legend, cursor, scrollbars ---
-
   const legend = withLegend(root, chart, series, config.legend || {});
-  const cursor = withCursor(root, chart, xAxis, yAxis, config.cursor || {});
+  const cursor = withCursor(
+    root,
+    chart,
+    xAxis,
+    primaryYAxis,
+    config.cursor || {}
+  );
   const scrollbars = withScrollbars(root, chart, config.scrollbars || {});
 
   chart.appear(800, 100);
@@ -176,7 +209,8 @@ export function buildCatSeriesChart(root, config) {
   return {
     chart,
     xAxis,
-    yAxis,
+    yAxis: primaryYAxis,
+    yAxes: Array.from(yAxisById.values()),
     series,
     legend,
     cursor,

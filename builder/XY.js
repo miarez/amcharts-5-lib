@@ -1,102 +1,170 @@
 // builder/XY.js
 
-import { CategoryAxis, DateAxis, ValueAxis } from "./Axis.js";
+import { AxisBase, CategoryAxis, ValueAxis } from "./Axis.js";
 import { Series } from "./Series.js";
 
 export class XY {
   constructor() {
-    this._categoryField = null;
-    this._explicitChartType = null;
-    this._xAxis = null;
-    this._yAxes = [];
-    this._seriesBuilders = [];
+    // x: category x-axis
+    const defaultXAxis = new CategoryAxis("x").build();
+    // y: primary value axis
+    const defaultYAxis = new ValueAxis("y").build();
+
+    // inject orientation defaults here
+    if (!defaultXAxis.position) defaultXAxis.position = "bottom";
+    if (!defaultYAxis.position) defaultYAxis.position = "left";
+
+    this._config = {
+      engineType: "XY",
+      chartType: null, // explicit override; if null we infer
+      categoryField: null,
+      axes: {
+        x: defaultXAxis,
+        y: [defaultYAxis],
+      },
+      series: [],
+    };
+  }
+
+  chartType(chartType) {
+    this._config.chartType = chartType;
+    return this;
   }
 
   category(field) {
-    this._categoryField = field;
+    this._config.categoryField = field;
     return this;
   }
 
-  chartType(type) {
-    this._explicitChartType = type;
+  // X axis modifier (never changes id, respects existing position)
+  xAxis(input = {}) {
+    const raw = input instanceof AxisBase ? input.build() : input;
+
+    const { id: _ignored, ...rest } = raw;
+
+    Object.assign(this._config.axes.x, rest);
+
+    // ensure we always have a position
+    if (!this._config.axes.x.position) {
+      this._config.axes.x.position = "bottom";
+    }
+
     return this;
   }
 
-  xAxis(axis) {
-    this._xAxis = axis;
+  // Y axis upsert by id
+  yAxis(input = {}) {
+    const raw = input instanceof AxisBase ? input.build() : input;
+    const id = raw.id;
+    if (!id) {
+      throw new Error("yAxis requires an 'id' (e.g. 'y', 'y2').");
+    }
+
+    const yAxes = this._config.axes.y;
+    const existing = yAxes.find((a) => a.id === id);
+
+    if (existing) {
+      Object.assign(existing, raw);
+      // preserve existing position unless user explicitly set one
+      if (!existing.position) {
+        existing.position = id === "y" ? "left" : "right";
+      }
+    } else {
+      const position =
+        raw.position ||
+        (id === "y" ? "left" : yAxes.length === 0 ? "left" : "right");
+
+      yAxes.push({
+        id,
+        type: raw.type || "value",
+        position,
+        ...raw,
+      });
+    }
+
     return this;
   }
 
-  yAxis(axis) {
-    this._yAxes.push(axis);
-    return this;
-  }
-
-  addSeries(series) {
-    this._seriesBuilders.push(series);
+  addSeries(seriesBuilder) {
+    if (!(seriesBuilder instanceof Series)) {
+      throw new Error("addSeries expects a Series instance.");
+    }
+    const built = seriesBuilder.build();
+    this._config.series.push(built);
     return this;
   }
 
   /**
-   * Expose chartType inference if you ever want to inspect it.
+   * Optional helper if you ever want to inspect the inferred chartType
+   * without finalizing the engine.
    */
   inferChartType() {
-    const series = this._seriesBuilders.map((s) =>
-      typeof s.build === "function" ? s.build() : s
-    );
-    const yAxes = this._yAxes.map((a) =>
-      typeof a.build === "function" ? a.build() : a
-    );
-
-    return inferChartTypeFromSeriesAndAxes(series, yAxes);
+    const yAxes = this._config.axes.y;
+    return inferChartTypeFromSeriesAndAxes(this._config.series, yAxes);
   }
 
   build() {
-    const xAxis =
-      this._xAxis && typeof this._xAxis.build === "function"
-        ? this._xAxis.build()
-        : this._xAxis;
+    if (!this._config.categoryField) {
+      throw new Error("categoryField must be set.");
+    }
+    if (!this._config.series.length) {
+      throw new Error("At least one series must be added.");
+    }
 
-    const yAxes = this._yAxes.map((a) =>
-      typeof a.build === "function" ? a.build() : a
+    const categoryField = this._config.categoryField;
+    const defaultXAxisId = this._config.axes.x?.id || "x";
+
+    // auto-create missing Y axes referenced in series.axis
+    const existingYIds = new Set(this._config.axes.y.map((a) => a.id));
+    const usedAxisIds = new Set(this._config.series.map((s) => s.axis || "y"));
+
+    usedAxisIds.forEach((axisId) => {
+      if (!existingYIds.has(axisId)) {
+        const axis = new ValueAxis(axisId).build();
+        if (!axis.position) {
+          axis.position = this._config.axes.y.length === 0 ? "left" : "right";
+        }
+        this._config.axes.y.push(axis);
+        existingYIds.add(axisId);
+      }
+    });
+
+    // normalize series defaults
+    const normalizedSeries = this._config.series.map((s) => ({
+      ...s,
+      axis: s.axis || "y",
+      xField: s.xField || categoryField,
+      xAxisId: s.xAxisId || defaultXAxisId,
+    }));
+
+    const yAxes = this._config.axes.y;
+
+    // stacking guardrail
+    validateStackingPerAxis(normalizedSeries, yAxes);
+
+    // chartType: explicit wins; else infer
+    const inferredType = inferChartTypeFromSeriesAndAxes(
+      normalizedSeries,
+      yAxes
     );
-
-    const series = this._seriesBuilders.map((s) =>
-      typeof s.build === "function" ? s.build() : s
-    );
-
-    // 🔥 Axis-level validation: stacked axis cannot have mixed geoms
-    validateStackingPerAxis(series, yAxes);
-
-    const chartType =
-      this._explicitChartType || inferChartTypeFromSeriesAndAxes(series, yAxes);
+    const chartType = this._config.chartType || inferredType;
 
     return {
-      engineType: "XY",
+      ...this._config,
       chartType,
-      categoryField: this._categoryField,
-      axes: {
-        x: xAxis,
-        y: yAxes,
-      },
-      series,
+      series: normalizedSeries,
     };
   }
 }
 
 /* ------------------------------------------------------------------ */
-/*  Helpers                                                           */
+/*  Helpers (same as before, reused)                                  */
 /* ------------------------------------------------------------------ */
 
 function normalizeGeom(s) {
   return (s.geom || "line").toLowerCase();
 }
 
-/**
- * Decide the chart type from:
- *  - the geoms of the series (column / line / area)
- *  - whether the first Y axis is stacked
- */
 function inferChartTypeFromSeriesAndAxes(series, yAxes) {
   if (!Array.isArray(series) || series.length === 0) {
     return "column"; // safe fallback
@@ -141,36 +209,24 @@ function inferChartTypeFromSeriesAndAxes(series, yAxes) {
   return "combo";
 }
 
-/**
- * Axis-level guardrail:
- *   If an axis is stacked, all series mapped to that axis
- *   must share the same geometry.
- *
- * Otherwise, throw a hard error in the *builder*.
- */
 function validateStackingPerAxis(series, yAxes) {
   if (!Array.isArray(yAxes) || yAxes.length === 0) return;
   if (!Array.isArray(series) || series.length === 0) return;
 
-  // Build a quick lookup: axisId -> axisConfig
   const axisById = new Map();
   yAxes.forEach((axis, idx) => {
     const id = axis.id || `y${idx}`;
     axisById.set(id, axis);
   });
 
-  // Map: axisId -> array of series geoms on that axis
   const geomsByAxis = new Map();
 
   series.forEach((s) => {
     const geom = normalizeGeom(s);
-
-    // Try to find which axis this series belongs to
     const axisIdFromSeries = s.axis || s.valueAxisId || s.yAxisId;
 
     let axisId = axisIdFromSeries;
     if (!axisId) {
-      // default: first Y axis
       const defaultAxis = yAxes[0];
       axisId = defaultAxis?.id || "y0";
     }
@@ -181,7 +237,6 @@ function validateStackingPerAxis(series, yAxes) {
     geomsByAxis.get(axisId).push(geom);
   });
 
-  // Now validate each axis independently
   for (const [axisId, geoms] of geomsByAxis.entries()) {
     const axis = axisById.get(axisId) || {};
     const stackingRaw = (axis.stacking || "").toLowerCase();
