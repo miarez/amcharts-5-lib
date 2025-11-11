@@ -1,13 +1,6 @@
-## New Hierarchy
+# New Hierarchy
 
-Engines:
-
-    1.	XY
-    2.	Radial (radar, gauges)
-    3.	Pie/Sliced (pie, donut, funnel)
-    4.	Hierarchy (tree, treemap, sunburst, force)
-    5.	Map
-    6.	Flow (Sankey, Chord)
+Engines: 1. XY 2. Radial (radar, gauges) 3. Pie/Sliced (pie, donut, funnel) 4. Hierarchy (tree, treemap, sunburst, force) 5. Map 6. Flow (Sankey, Chord)
 
 ```
 Engine
@@ -27,12 +20,10 @@ Engine
  │        • Beeswarm / Jitter
  │        • Density / Hexbin
  ├─ Radial
- │   ├─ CircularSeries  (multi-point plots)
- │   │    • Radar / Spider
- │   │    • Polar line / area
- │   │    • Polar column
- │   │    • Polar scatter
- │   │    • Radar Heatmap (polar CatCat)
+ │   ├─ CircularSeries  (multi-point plots; angle + radius axes)
+ │   │    • CatSeries → Radar / Spider, Polar line / area, Polar column
+ │   │    • SeriesSeries → Polar scatter
+ │   │    • CatCat → Radar Heatmap (polar cross-tab)
  │   └─ Gauge  (single-value readouts)
  │        • Circular gauge
  │        • Semi / Donut gauge
@@ -56,6 +47,84 @@ Engine
       • Sankey
       • Chord
       • Dependency Flow
+```
+
+## Directory Structure
+
+```
+src/
+  core/
+    applyBaseConfig.js   // config normalization
+    createChart.js       // routing from chartType -> builder
+    registry.js          // mapping "line" -> charts/xy/catSeries/line.js
+    // other non-visual infra if needed
+
+  engines/
+    xyEngine.js
+    radialEngine.js
+    pieEngine.js
+    hierarchyEngine.js
+    // mapEngine.js, flowEngine.js later
+
+  charts/
+    xy/
+      catCat/
+        heatmap.js
+        mosaic.js
+        confusionMatrix.js
+      catSeries/
+        _baseCatSeries.js
+        line.js
+        area.js
+        column.js
+        stackedColumn.js
+        stackedArea.js
+        stream.js
+        waterfall.js
+        dot.js
+      seriesSeries/
+        _baseSeriesSeries.js
+        scatter.js
+        bubble.js
+        beeswarm.js
+        hexbin.js
+
+    radial/
+      circularSeries/
+        _baseCircularSeries.js
+        radar.js
+        polarLine.js
+        polarArea.js
+        polarColumn.js
+        polarScatter.js
+        radarHeatmap.js
+      gauge/
+        _baseGauge.js
+        gaugeBands.js
+        gaugeSolid.js
+        gaugeMultipart.js
+        gaugeProgress.js
+
+    pie/
+      pie.js
+      donut.js
+      nestedDonut.js
+      funnel.js
+      pyramid.js
+
+    hierarchy/
+      treemap.js
+      sunburst.js
+      forceTree.js
+
+  decorators/
+    withCursor.js
+    withLegend.js
+    withScrollbars.js
+
+  utils/
+    loadData.js
+    applyChartBackground.js
 ```
 
 ## Settings
