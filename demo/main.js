@@ -2,7 +2,7 @@
 
 import { createChart } from "../src/core/createChart.js";
 import { loadData, normalizeDataForEngine } from "../src/utils/loadData.js";
-import chartConfig from "./config/XY/seriesSeries/scatter.js";
+import chartConfig from "./config/XY/seriesSeries/beeswarm.js";
 import { pp, debug } from "../src/utils/pp.js"; // optional, but handy
 
 debug();
