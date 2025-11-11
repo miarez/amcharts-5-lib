@@ -1,5 +1,7 @@
 # 🐝 amCharts 5 Vibe Coding Project
 
+test
+
 ![alt text](image.png)
 
 > **Note:** This README was generated collaboratively by **Stas Pakhomov** and **ChatGPT-5**.  
