@@ -1,31 +1,43 @@
 // demo/main.js
+
 import { createChart } from "../src/core/createChart.js";
 import { loadData, normalizeDataForEngine } from "../src/utils/loadData.js";
+import chartConfig from "./config/column.js";
+import { pp, debug } from "../src/utils/pp.js"; // optional, but handy
 
 async function bootstrap() {
   try {
-    const res = await fetch("./config/column.json");
-    const config = await res.json();
+    // Enable debug logging if you want
+    // debug();
+    pp.hr("Bootstrap start");
 
+    // 1) Start from the builder-produced config
+    const baseConfig = chartConfig;
+
+    // 2) Load data if a dataLoader is present
     let data = [];
-    if (config.dataLoader) {
-      const raw = await loadData(config.dataLoader);
-      data = normalizeDataForEngine(raw, config.engine);
-    } else if (config.data) {
-      data = normalizeDataForEngine(config.data, config.engine);
+    if (baseConfig.dataLoader) {
+      const raw = await loadData(baseConfig.dataLoader);
+      data = normalizeDataForEngine(raw, baseConfig.engine);
+      pp.log("Loaded rows:", data.length);
     }
 
-    console.log("Config:", config);
-    console.log("Data rows:", data.length, data.slice(0, 5));
+    // 3) Create a final config object with attached data
+    const config = {
+      ...baseConfig,
+      data,
+    };
 
-    config.data = data;
+    pp.deep(config);
 
+    // 4) Create the chart
     const { root, chart } = createChart(config);
 
+    // 5) Expose for console debugging
     window.root = root;
     window.chart = chart;
 
-    console.log("Chart created:", chart);
+    pp.log("Chart created:", chart);
   } catch (err) {
     console.error("Error creating chart:", err);
   }

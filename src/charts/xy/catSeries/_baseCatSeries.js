@@ -21,7 +21,6 @@ export function buildCatSeriesChart(root, config) {
 
   const seriesDefs = Array.isArray(engine.series) ? engine.series : [];
 
-  pp.log("sup dawg");
   // --- FIELDS ---
 
   let categoryField = engine.categoryField || xCfg.field;
