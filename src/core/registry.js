@@ -12,9 +12,17 @@ import { streamChart } from "../charts/xy/catSeries/stream.js";
 import { waterfallChart } from "../charts/xy/catSeries/waterfall.js";
 import { scatterChart } from "../charts/xy/seriesSeries/scatter.js";
 import { beeswarmChart } from "../charts/xy/seriesSeries/beeswarm.js";
+import { radarHeatmapChart } from "../charts/radial/circularSeries/radarHeatmap.js";
 
 // catCat
 import { heatmapChart } from "../charts/xy/catCat/heatmap.js";
+
+// radial
+// circularSeries
+import { radarChart } from "../charts/radial/circularSeries/radar.js";
+import { polarLineChart } from "../charts/radial/circularSeries/polarLine.js";
+import { polarAreaChart } from "../charts/radial/circularSeries/polarArea.js";
+import { polarScatterChart } from "../charts/radial/circularSeries/polarScatter.js";
 
 const registry = {
   xy: {
@@ -33,6 +41,14 @@ const registry = {
     // seriesSeries
     scatter: scatterChart,
     beeswarm: beeswarmChart,
+  },
+  radial: {
+    // circularSeries
+    radar: radarChart,
+    polarline: polarLineChart,
+    polararea: polarAreaChart,
+    polarscatter: polarScatterChart,
+    radarheatmap: radarHeatmapChart,
   },
 };
 

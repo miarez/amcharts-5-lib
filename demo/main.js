@@ -2,7 +2,7 @@
 
 import { createChart } from "../src/core/createChart.js";
 import { loadData, normalizeDataForEngine } from "../src/utils/loadData.js";
-import chartConfig from "./config/XY/seriesSeries/beeswarm.js";
+import chartConfig from "./config/radial/circularSeries/radarHeatmap.js";
 import { pp, debug } from "../src/utils/pp.js"; // optional, but handy
 
 debug();
@@ -29,6 +29,7 @@ async function bootstrap() {
       data,
     };
 
+    pp.deep(config.data[0]);
     pp.deep(config);
 
     // 4) Create the chart

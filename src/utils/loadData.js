@@ -44,34 +44,51 @@ function parseCsv(text, delimiter = ",") {
  *
  * This is where we fix your "revenue: '12000'" problem globally.
  */
-export function normalizeDataForEngine(data, engine) {
-  if (!Array.isArray(data) || !data.length) return data || [];
+// src/utils/normalizeDataForEngine.js
 
-  const e = engine || {};
-  const numericCandidates = [];
+export function normalizeDataForEngine(raw, engine = {}) {
+  const rows = Array.isArray(raw) ? raw : [];
+  const axes = engine.axes || {};
+  const series = Array.isArray(engine.series) ? engine.series : [];
 
-  const series = Array.isArray(e.series) ? e.series : [];
+  const numericFields = new Set();
 
-  for (const s of series) {
-    if (!s) continue;
-    if (s.field) numericCandidates.push(s.field);
-    if (s.xField) numericCandidates.push(s.xField);
-    if (s.yField) numericCandidates.push(s.yField);
-    if (s.radiusField) numericCandidates.push(s.radiusField);
-    if (s.sizeField) numericCandidates.push(s.sizeField);
+  // 1) Any axis with type "value" → its field should be numeric
+  const x = axes.x;
+  if (x && x.type === "value" && x.field) {
+    numericFields.add(x.field); // this will catch "angle" for polar
   }
 
-  const numericFields = [...new Set(numericCandidates)].filter(Boolean);
-  if (!numericFields.length) return data;
-
-  return data.map((row) => {
-    const copy = { ...row };
-    for (const f of numericFields) {
-      const v = copy[f];
-      if (v === null || v === undefined || v === "") continue;
-      const n = Number(v);
-      if (!Number.isNaN(n)) copy[f] = n;
+  const yArray = Array.isArray(axes.y) ? axes.y : axes.y ? [axes.y] : [];
+  yArray.forEach((axis) => {
+    if (axis && axis.type === "value" && axis.field) {
+      numericFields.add(axis.field);
     }
-    return copy;
+  });
+
+  // 2) Series value fields (y) – same thing we did before
+  series.forEach((s) => {
+    if (s.field) numericFields.add(s.field);
+    if (s.valueField) numericFields.add(s.valueField);
+  });
+
+  // 3) Coerce those fields from "123" → 123 where possible
+  return rows.map((row) => {
+    const out = { ...row };
+
+    numericFields.forEach((field) => {
+      const v = out[field];
+      if (v == null) return;
+      if (typeof v === "number") return;
+
+      if (typeof v === "string") {
+        const num = Number(v.replace(/,/g, ""));
+        if (!Number.isNaN(num)) {
+          out[field] = num;
+        }
+      }
+    });
+
+    return out;
   });
 }
